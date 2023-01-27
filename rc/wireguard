@@ -1,0 +1,27 @@
+  VNAME="Enigma2 Wireguard"
+  VINFO="Enigma2 Wireguard v1"
+  BINARY="wg-quick"
+  case "$1" in
+    start)
+    wg-quick up wg0
+   ;;
+    stop)
+    wg-quick down wg0
+   ;;
+    restart)
+    wg-quick down wg0
+    sleep 1
+    wg-quick up wg0
+   ;;
+    version)
+    echo "$VNAME"   
+   ;;
+    info)
+    echo "$VINFO"
+   ;;
+    *)
+    echo "usage: $0 start|stop|restart|version|info" >&2 
+    exit 1
+   ;;
+  esac
+  exit 0
