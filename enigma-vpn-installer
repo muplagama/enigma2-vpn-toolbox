@@ -158,7 +158,7 @@ wg_menu_check
 echo -e ""
 ovpn_menu_check
 echo -e ""
-echo -e "${GREEN}0) Exit${NC}"
+echo -e "0) Exit"
 echo -e ""
 read -p "choose an Option: " main </dev/tty
 
