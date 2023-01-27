@@ -152,7 +152,7 @@ my_header
 wg_av
 ovpn_av
 echo -e ""
-echo -e "        Menu             "
+echo -e "##### Menu #####"
 echo -e ""
 wg_menu_check
 echo -e ""
