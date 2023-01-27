@@ -140,8 +140,8 @@ check_wg_ks=$(opkg list-installed wireguard-tools | grep wireguard)
 	fi
 }
 enable_wg_ks() {
-	echo "${GREEN}...enable and start killswitch${NC}"
-	sleep 1
+	echo -e "${GREEN}...enable autostart${NC}"
+	sleep 2
 	/etc/init.d/killswitch enable  > /dev/null 2>&1
 }
 
