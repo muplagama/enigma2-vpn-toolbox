@@ -61,9 +61,9 @@ check_install_ovpn=$(opkg list-installed openvpn | grep openvpn)
 }
 my_header() {
         clear
-        echo ""
-        echo "Enigma2 Network Toolbox"
-        echo ""
+	echo "+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+"
+	echo "|E|n|i|g|m|a|2| |N|e|t|w|o|r|k| |T|o|o|l|b|o|x|"
+	echo "+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+"
 }
 wrong_opt() {
         echo "Wrong option!"
