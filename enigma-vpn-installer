@@ -9,22 +9,22 @@ wg_menu_check() {
 menu_check_av_wg=$(opkg list wireguard-tools | grep wireguard-tools)
         if  [ -n "$menu_check_av_wg" ]
                 then
-                        echo -e "${GREEN}wi) WireGuard install${NC}"
-                        echo -e "${GREEN}wk) WireGuard Killswitch (coming soon)${NC}"
+                        echo -e "${GREEN}1) WireGuard install${NC}"
+                        echo -e "${GREEN}2) WireGuard Killswitch (coming soon)${NC}"
                 else
-                        echo -e "${RED}wi) WireGuard install (not possible)${NC}"
-                        echo -e "${RED}wk) WireGuard Killswitch (not possible)${NC}"
+                        echo -e "${RED}1) WireGuard install (not possible)${NC}"
+                        echo -e "${RED}2) WireGuard Killswitch (not possible)${NC}"
         fi
 }
 ovpn_menu_check() {
 menu_check_av_ovpn=$(opkg list openvpn | grep openvpn)
         if  [ -n "$menu_check_av_ovpn" ]
                 then
-                        echo -e "${GREEN}oi) OpenVPN install (coming soon)${NC}"
-                        echo -e "${GREEN}ok) OpenVPN Killswitch (coming soon)${NC}"
+                        echo -e "${GREEN}3) OpenVPN install (coming soon)${NC}"
+                        echo -e "${GREEN}4) OpenVPN Killswitch (coming soon)${NC}"
                 else
-                        echo -e "${RED}oi) OpenVPN install (not possible)${NC}"
-                        echo -e "${RED}ok) OpenVPN Killswitch (not possible)${NC}"
+                        echo -e "${RED}3) OpenVPN install (not possible)${NC}"
+                        echo -e "${RED}4) OpenVPN Killswitch (not possible)${NC}"
         fi
 }
 
@@ -138,7 +138,7 @@ echo -e ""
 read -p "choose an Option: " main </dev/tty
 
 case $main in
-wi)
+1)
         sys_update
         wg_proof_inst
         wg_read_conf
@@ -147,13 +147,13 @@ wi)
         wg_check_connect
         mainmenu
         ;;
-wk)
+2)
         mainmenu
         ;;
-oi)
+3)
         mainmenu
         ;;
-ok)
+4)
         mainmenu
         ;;
 0)
