@@ -1,0 +1,166 @@
+#!/bin/bash
+RED='\033[0;31m'
+ORANGE='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+### Preset ###
+wg_menu_check() {
+menu_check_av_wg=$(opkg list wireguard-tools | grep wireguard-tools)
+        if  [ -n "$menu_check_av_wg" ]
+                then
+                        echo -e "${GREEN}wi) WireGuard install${NC}"
+                        echo -e "${GREEN}wk) WireGuard Killswitch${NC}"
+                else
+                        echo -e "${RED}wi) WireGuard install (not possible)${NC}"
+                        echo -e "${RED}wk) WireGuard Killswitch (not possible)${NC}"
+        fi
+}
+ovpn_menu_check() {
+menu_check_av_ovpn=$(opkg list openvpn | grep openvpn)
+        if  [ -n "$menu_check_av_ovpn" ]
+                then
+                        echo -e "${GREEN}oi) OpenVPN install${NC}"
+                        echo -e "${GREEN}ok) OpenVPN Killswitch${NC}"
+                else
+                        echo -e "${RED}oi) OpenVPN install (not possible)${NC}"
+                        echo -e "${RED}ok) OpenVPN Killswitch (not possible)${NC}"
+        fi
+}
+
+
+wg_av() {
+check_install_wg=$(opkg list-installed wireguard-tools | grep wireguard-tools)
+        if  [ -n "$check_install_wg" ]
+                then
+                        echo -e "${ORANGE}WireGuard installation already found!${NC}"
+                else
+                        check_wg_av=$(opkg list wireguard-tools | grep wireguard-tools)
+                                if  [ -n "$check_wg_av" ]
+                                        then
+                                                echo -e "${GREEN}WireGuard installation possible!${NC}"
+                                        else
+                                                echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
+                                fi
+        fi
+}
+ovpn_av() {
+check_install_ovpn=$(opkg list-installed openvpn | grep openvpn)
+        if  [ -n "$check_install_ovpn" ]
+                then
+                        echo -e "${ORANGE}OpenVPN installation already found!${NC}"
+                else
+                        check_ovpn_av=$(opkg list openvpn | grep openvpn)
+                                if  [ -n "$check_ovpn_av" ]
+                                        then
+                                                echo -e "${GREEN}OpenVPN installation possible!${NC}"
+                                        else
+                                                echo -e "${RED}Sorry! OpenVPN installation impossible!${NC}"
+                                fi
+        fi
+}
+my_header() {
+        clear
+        echo ""
+        echo "Enigma2 Network Toolbox"
+        echo ""
+}                                                                                                                            
+wrong_opt() {
+        echo "Wrong option!"
+        sleep 2
+        clear
+}
+sys_update() {
+        opkg update > /dev/null 2>&1
+}
+
+### WireGuard ###
+wg_proof_inst() {
+        echo -e "${ORANGE}checking system compatibility...${NC}"
+proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
+        if  [ -n "$proof_wg_inst" ]
+                then
+                        echo -e "${GREEN}...install WireGuard${NC}"
+                        opkg install wireguard-tools
+                else
+                        echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
+                        exit 0
+        fi
+}
+wg_read_conf() {
+echo "Pipe in wireguard config, or paste and it ctrl-d when done"
+wgconf=$(cat)
+
+cat <<EOF > /etc/wireguard/wg0.conf
+${wgconf}
+EOF
+chmod 644 /etc/wireguard/wg0.conf
+}
+wg_trim_conf() {
+sed -i '/DNS/d' /etc/wireguard/wg0.conf
+sed -i 's/\/0/\/1/g' /etc/wireguard/wg0.conf
+}
+wg_start() {
+        echo -e "${GREEN}...install update-rc.d${NC}"
+        opkg install update-rc.d > /dev/null 2>&1
+        echo -e "${GREEN}...create startscript${NC}"
+        wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard > /dev/null 2>&1
+        echo -e "${GREEN}...enable startscript${NC}"
+        update-rc.d wireguard defaults
+        /etc/init.d/wireguard start
+}
+wg_check_connect() {
+ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
+        if  [ -n "$ping_check" ]
+                then
+                        echo -e "${GREEN}WireGuard ist up${NC}"
+                else
+                        echo -e "${RED}Error! WireGuard ist down${NC}"
+        fi
+}
+mainmenu() {
+my_header
+wg_av
+ovpn_av
+echo -e ""
+echo -e "        Menu             "
+echo -e ""
+wg_menu_check
+echo -e ""
+ovpn_menu_check
+echo -e ""
+echo -e "${GREEN}0) Exit${NC}"
+echo -e ""
+read -p "choose an Option: " main </dev/tty
+
+case $main in
+wi)
+        sys_update
+        wg_proof_inst
+        wg_read_conf
+        wg_trim_conf
+        wg_start
+        wg_check_connect
+        mainmenu
+        ;;
+wk)
+        mainmenu
+        ;;
+oi)
+        mainmenu
+        ;;
+ok)
+        mainmenu
+        ;;
+0)
+        echo "bye bye"
+        exit 0
+        ;;
+*)
+        wrong_opt
+        mainmenu
+        ;;
+
+esac
+}
+mainmenu
