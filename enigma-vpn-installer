@@ -106,7 +106,9 @@ wg_start() {
         echo -e "${GREEN}...create startscript${NC}"
         wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard > /dev/null 2>&1
         echo -e "${GREEN}...enable startscript${NC}"
+	chmod +x /etc/init.d/wireguard
         update-rc.d wireguard defaults
+	sleep 1
         /etc/init.d/wireguard start
 }
 wg_check_connect() {
