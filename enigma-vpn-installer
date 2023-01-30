@@ -164,7 +164,6 @@ echo -e "4) uninstall WireGuard killswitch"
 echo -e ""
 ovpn_menu_check
 echo -e ""
-echo -e "5) Uninstall Killswitch"
 echo -e "0) Exit"
 echo -e ""
 read -p "choose an Option: " main </dev/tty
