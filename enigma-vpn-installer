@@ -187,14 +187,13 @@ case $main in
 3)
 	uninstall_wg_ks
 	mainmenu
+	;;
 4)
         mainmenu
         ;;
 5)
         mainmenu
         ;;
-
-
 0)
         echo "bye bye"
         exit 0
