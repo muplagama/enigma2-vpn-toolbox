@@ -38,3 +38,7 @@ OpenVPN installation possible!
 
 choose an Option: 
 ```
+
+
+### Donate: ###
+BTC: 1JgfTbJtRUTHPo2W56KmjmLvsZkg7MvrVk
