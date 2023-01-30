@@ -144,6 +144,19 @@ enable_wg_ks() {
 	sleep 2
 	/etc/init.d/killswitch enable  > /dev/null 2>&1
 }
+check_wg_ks() {
+	check_wg_ks_ps=$(pgrep killswitch.sh)
+	if  [ -n  "$check_wg_ks_ps" ]
+        	echo -e "${GREEN}Success: Killswitch is running.${NC}"
+        	sleep 5
+	else
+		echo -e "${RED}Error! Killswitch not running.${NC}"
+		sleep 5
+	fi
+}
+
+
+
 uninstall_wg_ks() {
         echo -e "${GREEN}...uninstall WireGuard killswitch${NC}"
         sleep 2
