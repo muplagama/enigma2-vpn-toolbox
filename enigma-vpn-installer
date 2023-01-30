@@ -20,11 +20,11 @@ ovpn_menu_check() {
 menu_check_av_ovpn=$(opkg list openvpn | grep openvpn)
         if  [ -n "$menu_check_av_ovpn" ]
                 then
-                        echo -e "${GREEN}3) OpenVPN install (coming soon)${NC}"
-                        echo -e "${GREEN}4) OpenVPN Killswitch (coming soon)${NC}"
+                        echo -e "${GREEN}4) OpenVPN install (coming soon)${NC}"
+                        echo -e "${GREEN}5) OpenVPN Killswitch (coming soon)${NC}"
                 else
-                        echo -e "${RED}3) OpenVPN install (not possible)${NC}"
-                        echo -e "${RED}4) OpenVPN Killswitch (not possible)${NC}"
+                        echo -e "${RED}4) OpenVPN install (not possible)${NC}"
+                        echo -e "${RED}5) OpenVPN Killswitch (not possible)${NC}"
         fi
 }
 
@@ -145,6 +145,13 @@ enable_wg_ks() {
 	/etc/init.d/killswitch enable  > /dev/null 2>&1
 }
 
+}
+uninstall_wg_ks() {
+        echo -e "${GREEN}...uninstall WireGuard killswitch${NC}"
+        sleep 2
+        /etc/init.d/killswitch uninstall  > /dev/null 2>&1
+}
+
 
 
 mainmenu() {
@@ -155,9 +162,11 @@ echo -e ""
 echo -e "##### Menu #####"
 echo -e ""
 wg_menu_check
+echo -e "4) uninstall WireGuard killswitch"
 echo -e ""
 ovpn_menu_check
 echo -e ""
+echo -e "5) Uninstall Killswitch"
 echo -e "0) Exit"
 echo -e ""
 read -p "choose an Option: " main </dev/tty
@@ -178,11 +187,16 @@ case $main in
         mainmenu
         ;;
 3)
-        mainmenu
-        ;;
+	uninstall_wg_ks
+	mainmenu
 4)
         mainmenu
         ;;
+5)
+        mainmenu
+        ;;
+
+
 0)
         echo "bye bye"
         exit 0
