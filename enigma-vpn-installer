@@ -194,6 +194,7 @@ case $main in
 2)
 	wg_ks_download
 	enable_wg_ks
+	check_wg_ks
         mainmenu
         ;;
 3)
