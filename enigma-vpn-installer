@@ -144,8 +144,6 @@ enable_wg_ks() {
 	sleep 2
 	/etc/init.d/killswitch enable  > /dev/null 2>&1
 }
-
-}
 uninstall_wg_ks() {
         echo -e "${GREEN}...uninstall WireGuard killswitch${NC}"
         sleep 2
