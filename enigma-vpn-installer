@@ -126,7 +126,8 @@ ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
 ### WireGuard Killswitch ###
 wg_ks_download() {
 check_wg_ks=$(opkg list-installed wireguard-tools | grep wireguard)
-	if [ -n "$check_wg_ks" ]; then
+	if [ -n "$check_wg_ks" ]
+		then
 	        echo -e "${GREEN}...download files${NC}"
        		sleep 1
         	wget -O /etc/wireguard/killswitch.sh https://raw.githubusercontent.com/muplagama/enigma2-wireguard-killswitch/main/killswitch.sh  > /dev/null 2>&1
@@ -147,6 +148,7 @@ enable_wg_ks() {
 check_wg_ks() {
 	check_wg_ks_ps=$(pgrep killswitch.sh)
 	if  [ -n  "$check_wg_ks_ps" ]
+	then
         	echo -e "${GREEN}Success: Killswitch is running.${NC}"
         	sleep 5
 	else
@@ -154,7 +156,6 @@ check_wg_ks() {
 		sleep 5
 	fi
 }
-
 
 
 uninstall_wg_ks() {
