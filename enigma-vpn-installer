@@ -160,7 +160,7 @@ echo -e ""
 echo -e "##### Menu #####"
 echo -e ""
 wg_menu_check
-echo -e "4) uninstall WireGuard killswitch"
+echo -e "3) uninstall WireGuard killswitch"
 echo -e ""
 ovpn_menu_check
 echo -e ""
