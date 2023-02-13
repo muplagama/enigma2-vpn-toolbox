@@ -116,10 +116,10 @@ wg_check_connect() {
 ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
         if  [ -n "$ping_check" ]
                 then
-                        echo -e "${GREEN}WireGuard ist up${NC}"
+                        echo -e "${GREEN}WireGuard is up${NC}"
 			sleep 10
                 else
-                        echo -e "${RED}Error! WireGuard ist down${NC}"
+                        echo -e "${RED}Error! WireGuard is down${NC}"
 			sleep 10
         fi
 }
