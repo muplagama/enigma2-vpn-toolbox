@@ -1,27 +1,38 @@
 #!/bin/bash -x
-VNAME="Enigma2 OpenVPN"
+  VNAME="Enigma2 OpenVPN"
   VINFO="Enigma2 OpenVPN v1"
+  NAME=ovpn
   BINARY=/usr/sbin/openvpn
   CONFIG=/etc/openvpn/openvpn.conf
-  case "$1" in
+    case "$1" in
     start)
     if  [ -f "$CONFIG" ]
     then
-     echo "starting OpenVPN"
-     $BINARY --daemon  --config $CONFIG
-     else
-     echo "openvpn.conf not found"
+      echo "starting OpenVPN"
+      $BINARY --daemon  --config $CONFIG
+    else
+      echo "openvpn.conf not found"
     fi
    ;;
-    stop)
-        echo "stopping OpenVPN"
-        openvpn_pid=$(pgrep openvpn)
-        kill $openvpn_pid
+   stop)
+     echo "stopping OpenVPN"
+     openvpn_pid=$(pgrep openvpn)
+     kill $openvpn_pid
            ;;
     restart)
     $0 stop
     sleep 1
     $0 start
+   ;;
+   enable)
+   echo "enable autostart"
+   update-rc.d $NAME defaults
+   $0 start
+   ;;
+   disable)
+   echo "remove autostart"
+   $0 stop
+   update-rc.d -f $NAME remove
    ;;
     version)
     echo "$VNAME"
@@ -30,7 +41,7 @@ VNAME="Enigma2 OpenVPN"
     echo "$VINFO"
    ;;
     *)
-    echo "usage: $0 start|stop|restart|version|info" >&2
+      echo "usage: $0 start|stop|restart|enable|disable|version|info" >&2
     exit 1
    ;;
   esac
