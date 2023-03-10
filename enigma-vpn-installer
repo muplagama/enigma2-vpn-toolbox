@@ -3,7 +3,7 @@ RED='\033[0;31m'
 ORANGE='\033[0;33m'
 GREEN='\033[0;32m'
 NC='\033[0m'
-
+#by LouMu
 ### Preset ###
 wg_menu_check() {
 menu_check_av_wg=$(opkg list wireguard-tools | grep wireguard-tools)
