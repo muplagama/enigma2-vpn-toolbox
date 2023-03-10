@@ -10,7 +10,7 @@
      else
      echo "ovpn.conf not found"
      exit 0
-       
+    fi   
    ;;
     stop)
     kill `cat $PIDFILE` || true
