@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/bin/bash -x
 VNAME="Enigma2 OpenVPN"
   VINFO="Enigma2 OpenVPN v1"
   BINARY=/usr/sbin/openvpn
   CONFIG=/etc/openvpn/openvpn.conf
   case "$1" in
     start)
-    if  [ -n "$CONFIG" ]
+    if  [ -f "$CONFIG" ]
     then
      echo "starting OpenVPN"
      $BINARY --daemon  --config $CONFIG
@@ -19,9 +19,9 @@ VNAME="Enigma2 OpenVPN"
         kill $openvpn_pid
            ;;
     restart)
-    $0 stop 
+    $0 stop
     sleep 1
-    $0 start 
+    $0 start
    ;;
     version)
     echo "$VNAME"
