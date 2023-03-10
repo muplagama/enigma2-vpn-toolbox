@@ -131,9 +131,9 @@ check_wg_ks=$(opkg list-installed wireguard-tools | grep wireguard)
 		then
 	        echo -e "${GREEN}...download files${NC}"
 		sleep 1
-		wget -O /etc/wireguard/killswitch.sh https://raw.githubusercontent.com/muplagama/enigma2-wireguard-killswitch/main/killswitch.sh  > /dev/null 2>&1
+		wget -O /etc/wireguard/killswitch.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/wg_killswitch/killswitch.sh  > /dev/null 2>&1
 		chmod +x /etc/wireguard/killswitch.sh
-		wget -O /etc/init.d/killswitch https://raw.githubusercontent.com/muplagama/enigma2-wireguard-killswitch/main/killswitch > /dev/null 2>&1
+		wget -O /etc/init.d/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/wg_killswitch/killswitch > /dev/null 2>&1
 		chmod +x /etc/init.d/killswitch
 		else
 		echo -e "${RED}Error! No WireGuard installation found.. please install before!${NC}"
