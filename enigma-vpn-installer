@@ -171,34 +171,26 @@ uninstall_wg_ks() {
 dm_grep=$(cat /etc/hostname)
 if [ $dm_grep = DMONE ]
         then
-        echo "Solo2 is running"
-
+        echo "Installing Dreambox One Version"
+	cd /tmp
+	curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
+	apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
+	curl -o /tmp/WireGuardONE.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardONE.zip?raw=true
+	unzip WireGuardONE.zip
+	python /tmp/WireGuard/WireGuard.py
 elif [ $dm_grep = DMTwo ]
         then
-        echo "Solo3 ist running"
+        echo "Installing Dreambox Two Version"
+	cd /tmp
+	curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
+	apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
+	curl -o /tmp/WireGuardTWO.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardTWO.zip?raw=true
+	unzip WireGuardTWO.zip
+	python /tmp/WireGuard/WireGuard.py
 else
-        echo "geht gar nichts"
+        echo "no installable on this system"
         exit 0
 fi
-
-
-dm_one() {
-cd /tmp
-curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
-curl -o /tmp/WireGuardONE.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardONE.zip?raw=true
-apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
-unzip WireGuardONE.zip
-python /tmp/WireGuard/WireGuard.py
-}
-
-dm_two() {
-cd /tmp
-curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
-curl -o /tmp/WireGuardTWO.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardTWO.zip?raw=true
-apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
-unzip WireGuardTWO.zip
-python /tmp/WireGuard/WireGuard.py
-}
 
 
 mainmenu() {
