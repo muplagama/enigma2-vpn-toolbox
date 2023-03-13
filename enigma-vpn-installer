@@ -167,6 +167,21 @@ uninstall_wg_ks() {
 
 
 ##### Dreambox VPN Manager
+
+dm_grep=$(cat /etc/hostname)
+if [ $dm_grep = DMONE ]
+        then
+        echo "Solo2 is running"
+
+elif [ $dm_grep = DMTwo ]
+        then
+        echo "Solo3 ist running"
+else
+        echo "geht gar nichts"
+        exit 0
+fi
+
+
 dm_one() {
 cd /tmp
 curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
