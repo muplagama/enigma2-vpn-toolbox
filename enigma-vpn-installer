@@ -188,7 +188,7 @@ elif [ $dm_grep = DMTwo ]
 	unzip WireGuardTWO.zip
 	python /tmp/WireGuard/WireGuard.py
 else
-        echo "no installable on this system"
+        echo "not installable on this system"
         exit 0
 fi
 }
