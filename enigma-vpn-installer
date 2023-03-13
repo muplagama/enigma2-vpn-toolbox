@@ -198,7 +198,7 @@ echo -e "3) uninstall WireGuard Killswitch"
 echo -e ""
 ovpn_menu_check
 echo -e ""
-echo -e "6) VPN Manager + Wireguard - DM One/Two"
+echo -e "6) VPN Manager + Wireguard - DM One/Two // TESTING"
 echo -e "0) Exit"
 echo -e ""
 read -p "choose an Option: " main </dev/tty
