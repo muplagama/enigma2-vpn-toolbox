@@ -167,7 +167,7 @@ uninstall_wg_ks() {
 
 
 ##### Dreambox VPN Manager
-
+dreambox_install() {
 dm_grep=$(cat /etc/hostname)
 if [ $dm_grep = DMONE ]
         then
@@ -191,7 +191,7 @@ else
         echo "no installable on this system"
         exit 0
 fi
-
+}
 
 mainmenu() {
 my_header
