@@ -13,6 +13,16 @@
     sleep 1
     wg-quick up wg0
    ;;
+    enable)
+    echo "enable autostart"
+    update-rc.d wireguard defaults
+    $0 start
+   ;;
+    disable)
+    echo "remove autostart"
+    $0 stop
+    update-rc.d -f wireguard remove
+   ;;
     version)
     echo "$VNAME"   
    ;;
