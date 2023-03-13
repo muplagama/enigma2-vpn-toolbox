@@ -166,6 +166,25 @@ uninstall_wg_ks() {
 }
 
 
+##### Dreambox VPN Manager
+dm_one() {
+cd /tmp
+curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
+curl -o /tmp/WireGuardONE.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardONE.zip?raw=true
+apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
+unzip WireGuardONE.zip
+python /tmp/WireGuard/WireGuard.py
+}
+
+dm_two() {
+cd /tmp
+curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
+curl -o /tmp/WireGuardTWO.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardTWO.zip?raw=true
+apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
+unzip WireGuardTWO.zip
+python /tmp/WireGuard/WireGuard.py
+}
+
 
 mainmenu() {
 my_header
