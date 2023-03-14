@@ -269,8 +269,7 @@ case $main in
 4)
 	ovpn_proof_inst
 	ovpn_read_conf
-	ovpn_user_pass
-        mainmenu
+	mainmenu
         ;;
 5)
         mainmenu
