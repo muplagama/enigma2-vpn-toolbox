@@ -183,15 +183,15 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
         fi
 }
 ovpn_read_conf() {
-	echo "Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)"
-	ovpnconf=$(cat)
+echo "Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)"
+ovpnconf=$(cat)
 
-	cat <<EOF > /etc/openvpn/openvpn.conf
-	${ovpnconf}
-	EOF
-	sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
-	sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
-	chmod 644 /etc/openvpn/openvpn.conf
+cat <<EOF > /etc/openvpn/openvpn.conf
+${ovpnconf}
+EOF
+sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
+sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
+chmod 644 /etc/openvpn/openvpn.conf
 }
 
 
