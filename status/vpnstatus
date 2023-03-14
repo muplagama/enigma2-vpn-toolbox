@@ -15,7 +15,7 @@ interface_check() {
                 echo -e "${GREEN} $iface VPN Interface is up${NC}"
         else
 		echo -e "${RED} $iface VPN Interface is down${NC}"
-        exit0
+        exit 0
 	fi
 }
 link_check(){
