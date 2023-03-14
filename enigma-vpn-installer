@@ -169,7 +169,19 @@ uninstall_wg_ks() {
         sleep 2
         /etc/init.d/killswitch uninstall  > /dev/null 2>&1
 }
-
+##### OpenVPN
+ovpn_proof_inst() {
+        echo -e "${ORANGE}checking system compatibility...${NC}"
+proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
+        if  [ -n "$proof_ovpn_inst" ]
+                then
+                        echo -e "${GREEN}...install Openvpn${NC}"
+                        opkg install openvpn
+                else
+                        echo -e "${RED}Sorry! Openvpn installation impossible!${NC}"
+                        exit 0
+        fi
+}
 
 ##### Dreambox VPN Manager
 dreambox_install() {
@@ -237,6 +249,7 @@ case $main in
 	mainmenu
 	;;
 4)
+	ovpn_proof_inst
         mainmenu
         ;;
 5)
