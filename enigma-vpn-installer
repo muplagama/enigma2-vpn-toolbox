@@ -74,6 +74,11 @@ sys_update() {
         opkg update > /dev/null 2>&1
 }
 
+vpnstatus(){
+	wget -O /bin/vpnstatus https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpnstatus
+	chmod +x /bin/vpnstatus
+}
+
 ### WireGuard ###
 wg_proof_inst() {
         echo -e "${ORANGE}checking system compatibility...${NC}"
@@ -218,6 +223,7 @@ case $main in
         wg_trim_conf
         wg_start
         wg_check_connect
+	vpnstatus
         mainmenu
         ;;
 2)
