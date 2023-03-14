@@ -193,7 +193,15 @@ sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
 sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
 chmod 644 /etc/openvpn/openvpn.conf
 }
+ovpn_user_pass() {
+echo "Pipe in <username> <password> (push <ENTER> and ctrl-d when done)"
+userpass=$(cat)
 
+cat <<EOF > /etc/openvpn/auth_pass
+${userpass}
+EOF
+chmod 644 /etc/openvpn/auth_pass
+}
 
 
 ##### Dreambox VPN Manager
@@ -264,6 +272,7 @@ case $main in
 4)
 	ovpn_proof_inst
 	ovpn_read_conf
+	ovpn_user_pass
 	mainmenu
         ;;
 5)
