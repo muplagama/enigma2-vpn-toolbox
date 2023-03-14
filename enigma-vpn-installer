@@ -207,7 +207,7 @@ chmod 644 /etc/openvpn/auth_pass
 ##### Dreambox VPN Manager
 dreambox_install() {
 dm_grep=$(cat /etc/hostname)
-if [ $dm_grep = DMONE ]
+if [ $dm_grep = dreambox ]
         then
         echo "Installing Dreambox One Version"
 	cd /tmp
@@ -278,6 +278,10 @@ case $main in
 5)
         mainmenu
         ;;
+6)	
+	dreambox_install
+	mainmenu
+	;;
 0)
         echo "bye bye"
         exit 0
