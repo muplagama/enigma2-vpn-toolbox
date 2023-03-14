@@ -32,7 +32,7 @@ link_check(){
 location_check(){
         echo -e "${ORANGE}$iface VPN location check${NC}"
         vpn_ip=$(curl -s ipinfo.io/ip)
-        echo -e "${GREEN} VPN IP:	"$vpn_ip"${NC}"
+        echo -e "${GREEN} VPN IP:       "$vpn_ip"${NC}"
         vpn_country=$(curl -s ipinfo.io/country)
         echo -e "${GREEN} VPN Country:  "$vpn_country"${NC}"
         vpn_city=$(curl -s ipinfo.io/city)
