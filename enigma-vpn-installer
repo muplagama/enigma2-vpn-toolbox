@@ -21,10 +21,10 @@ menu_check_av_ovpn=$(opkg list openvpn | grep openvpn)
         if  [ -n "$menu_check_av_ovpn" ]
                 then
                         echo -e "${GREEN}4) OpenVPN install		       // opkg based systems${NC}"
-                        echo -e "${GREEN}5) OpenVPN Killswitch (coming soon)   // opkg based systems${NC}"
+                        echo -e "${GREEN}5) OpenVPN Killswitch (coming soon)  // opkg based systems${NC}"
                 else
                         echo -e "${RED}4) OpenVPN install                      // opkg based systems${NC}"
-                        echo -e "${RED}5) OpenVPN Killswitch (not possible)    // opkg based systems${NC}"
+                        echo -e "${RED}5) OpenVPN Killswitch (not possible)   // opkg based systems${NC}"
         fi
 }
 
