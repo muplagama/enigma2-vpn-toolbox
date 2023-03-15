@@ -191,6 +191,8 @@ cat <<EOF > /etc/openvpn/openvpn.conf
 ${ovpnconf}
 EOF
 sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
+sed -i '/script-security/d' /etc/openvpn/openvpn.conf
+sed -i '/update-resolv-conf/d' /etc/openvpn/openvpn.conf
 sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
 sed -i '1a\log /tmp/openvpn.log' /etc/openvpn/openvpn.conf
 
