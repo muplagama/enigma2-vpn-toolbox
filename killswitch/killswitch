@@ -1,0 +1,14 @@
+#!/bin/bash
+clear
+####Interface whois ###
+iface=$(ip -o link show | awk -F': ' '{print $2}' | grep wg; ip -o link show | awk -F': ' '{print $2}' | grep tun)
+###default_path
+if [[ $iface == "wg"* ]]; then
+        default_path="/etc/wireguard/"
+elif [[ $iface == "tun"* ]]; then
+        default_path="/etc/openvpn/"
+fi
+
+
+echo "$iface"
+echo "$default_path"
