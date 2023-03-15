@@ -183,7 +183,8 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
         fi
 }
 ovpn_read_conf() {
-echo "Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)"
+clear
+echo "${ORANGE}Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
 ovpnconf=$(cat)
 
 cat <<EOF > /etc/openvpn/openvpn.conf
@@ -196,7 +197,8 @@ sed -i '1a\log /tmp/openvpn.log' /etc/openvpn/openvpn.conf
 chmod 644 /etc/openvpn/openvpn.conf
 }
 ovpn_user_pass() {
-echo "creating OpenVPN Login File"
+clear
+echo "${ORANGE}creating OpenVPN Login File${NC}"
 echo ""
 read -e -i "$openvpnuser" -p "Username: " openvpnuser </dev/tty
 read -e -i "$openvpnpass" -p "Password: " openvpnpass </dev/tty
