@@ -5,16 +5,17 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 clear
-	echo ""
+     	echo ""
         echo -e "${ORANGE}VPN status check${NC}"
         echo""
 interface_check() {
         echo -e "${ORANGE}Interface status check${NC}"
-        iface=$(ip a | grep "wg*" | grep "tun*" |  awk -F': ' '{print $2}' | head -n 1)
+
+        iface=$(ip a | grep "wg0" |  awk -F': ' '{print $2}' | head -n 1; ip a | grep "tun0" |  awk -F': ' '{print $2}' | head -n 1)
         if  [ -n "$iface" ]; then
                 echo -e "${GREEN} $iface VPN Interface is up${NC}"
         else
-		echo -e "${RED} $iface VPN Interface is down${NC}"
+            	echo -e "${RED} $iface VPN Interface is down${NC}"
         exit 0
 	fi
 }
@@ -25,14 +26,15 @@ link_check(){
                 echo -e "${RED} $iface VPN link check failed${NC}"
                 exit 0
         else
-		echo -e "${GREEN} $iface VPN link check success${NC}"
+            	echo -e "${GREEN} $iface VPN link check success${NC}"
         fi
 }
 
 location_check(){
         echo -e "${ORANGE}$iface VPN location check${NC}"
         vpn_ip=$(curl -s ipinfo.io/ip)
-        echo -e "${GREEN} VPN IP:       "$vpn_ip"${NC}"
+#        echo -e "${GREEN} VPN IP:	 "$vpn_ip"${NC}"
+        echo -e "${GREEN} VPN IP:	"hier koennte Ihre Werbung stehen   ^=^x^`"${NC}"
         vpn_country=$(curl -s ipinfo.io/country)
         echo -e "${GREEN} VPN Country:  "$vpn_country"${NC}"
         vpn_city=$(curl -s ipinfo.io/city)
