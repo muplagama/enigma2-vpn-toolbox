@@ -11,7 +11,7 @@ clear
 interface_check() {
         echo -e "${ORANGE}Interface status check${NC}"
 
-        iface=$(ip a | grep "wg0" |  awk -F': ' '{print $2}' | head -n 1; ip a | grep "tun0" |  awk -F': ' '{print $2}' | head -n 1)
+        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep wg; ip -o link show | awk -F': ' '{print $2}' | grep tun)
         if  [ -n "$iface" ]; then
                 echo -e "${GREEN} $iface VPN Interface is up${NC}"
         else
