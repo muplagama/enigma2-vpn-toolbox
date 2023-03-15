@@ -191,15 +191,21 @@ ${ovpnconf}
 EOF
 sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
 sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
+sed -i '1a\log /tmp/openvpn.log' /etc/openvpn/openvpn.conf
+
 chmod 644 /etc/openvpn/openvpn.conf
 }
 ovpn_user_pass() {
-echo "Pipe in <username> <password> (push <ENTER> and ctrl-d when done)"
-userpass=$(cat)
+echo "creating OpenVPN Login File"
+echo ""
+read -e -i "$openvpnuser" -p "Username: " openvpnuser </dev/tty
+read -e -i "$openvpnpass" -p "Password: " openvpnpass </dev/tty
 
 cat <<EOF > /etc/openvpn/auth_pass
-${userpass}
+${openvpnuser}
+${openvpnpass}
 EOF
+
 chmod 644 /etc/openvpn/auth_pass
 }
 
