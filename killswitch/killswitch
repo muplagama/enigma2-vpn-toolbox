@@ -89,7 +89,7 @@ echo "//check_vpn $check_vpn"
                 dns_v4=$$url_grep
                 ip route del "$dns_ip"
                 else
-                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*//)
+                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -1)
                 ip route del "$dns_ip"
                 fi
 ###  add backup route ###
