@@ -25,71 +25,75 @@ dns_ip=1.1.1.1
 route_default=$(grep default $default_path/route_default | grep default)
 route_ip=$(grep default $default_path/route_default | awk '/default/ {print $3}')
 route_dev=$(grep default $default_path/route_default | awk '/default/ {print $5}')
-while true ; do 
+while true ; do
 ### interface check ###
   check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
-    if  [ -n "$check_vpn" ]; then
-      echo "//check_vpn $check_vpn"
-      ### add default route
+if  [ -n "$check_vpn" ]; then
+echo "//check_vpn $check_vpn"
+### add default route
       add_default=$(ip route show default | grep default)
       if  [ -z "$add_default" ]; then
         ip route add default via "$route_ip" dev "$route_dev"
         echo "//add_default "$route_ip" dev "$route_dev""
       fi
-      ### check connect ###
+### check connect ###
       ping_check=$(ping -c 2 -I $iface "$dns_ip" | grep time)
       if  [ -n "$ping_check" ]; then
-        echo "//ping_check"
-        ### lookop SRV IP ###
-        if [[ $url_grep =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          dns_v4=$url_grep
-          echo "//dns_v4"
+        echo "//ping_check ok"
+### lookup SRV IP ###
+                if [[ $url_grep =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                dns_v4=$url_grep
+                echo "//dns_v4"
+                else
+                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*//)
+                echo "//dns_v4"
+                fi
+### remove backup ###
+                rem_backup_v4=$(ip route show | grep "$dns_v4" )
+                if  [ -n "$rem_backup_v4" ]; then
+                ip route del "$dns_v4"
+                echo "//rem_backup"
+                fi
         else
-          dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*//)
-          echo "//dns_v4"
-         fi
-      ### remove backup ###
-      rem_backup_v4=$(ip route show | grep "$dns_v4" )
-        if  [ -n "$rem_backup_v4" ]; then
-          ip route del "$dns_v4"
-          echo "//rem_backup"
+                echo "ping_check not OK"
+                if [[ $iface == "wg"* ]]; then
+                /etc/init.d/wireguard restart
+                elif [[ $iface == "tun"* ]]; then
+                /etc/init.d/openvpn restart
+                fi
         fi
-      fi
-    else
-      echo "Ping not  OK"
-      if [[ $iface == "wg"* ]]; then
-        /etc/init.d/wireguard restart
-      elif [[ $iface == "tun"* ]]; then
-        /etc/init.d/openvpn restart
-    fi
-  else
-    ### remove default route ###
-    del_default=$(ip route show default | grep default)
-    if  [ -n "$del_default" ]; then
-      ip route del default
-    fi
-    ### DNS Request ###
-    dns_request=$(ip route show | grep "default")
-    if  [ -z "$dns_request" ]; then
-      ip route add "$dns_ip" via "$route_ip" dev "$route_dev"
-      sleep 1
-    fi
-    if [[ $url_grep =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-      dns_v4=$$url_grep
-      ip route del "$dns_ip"
-    else
-      dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*//)
-      ip route del "$dns_ip"
-    fi
-      ###  add backup route ###
-    add_backup_A=$(ip route show | grep "$dns_v4")
-    if  [ -z "$add_backup_A" ]; then
-      ip route add "$dns_v4" via "$route_ip" dev "$route_dev"
-    fi
-    if [[ $iface == "wg"* ]]; then
-      /etc/init.d/wireguard restart
-    elif [[ $iface == "tun"* ]]; then
-      /etc/init.d/openvpn restart
-      sleep 3
-     fi
+
+ else
+
+### remove default route ###
+                del_default=$(ip route show default | grep default)
+                if  [ -n "$del_default" ]; then
+                ip route del default
+                fi
+### DNS Request ###
+                dns_request=$(ip route show | grep "default")
+                if  [ -z "$dns_request" ]; then
+                ip route add "$dns_ip" via "$route_ip" dev "$route_dev"
+                sleep 1
+                fi
+### request ipv4
+                if [[ $url_grep =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                dns_v4=$$url_grep
+                ip route del "$dns_ip"
+                else
+                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*//)
+                ip route del "$dns_ip"
+                fi
+###  add backup route ###
+                add_backup_A=$(ip route show | grep "$dns_v4")
+                if  [ -z "$add_backup_A" ]; then
+                ip route add "$dns_v4" via "$route_ip" dev "$route_dev"
+                fi
+                if [[ $iface == "wg"* ]]; then
+                /etc/init.d/wireguard restart
+                elif [[ $iface == "tun"* ]]; then
+                /etc/init.d/openvpn restart
+                sleep 3
+                fi
+fi
 done
