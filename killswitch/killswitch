@@ -2,6 +2,13 @@
 clear
 ####Interface whois ###
 iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+        if  [ -z "$iface" ]; then
+                if [ -e /etc/wireguard/*conf ]; then
+                        iface="wg"*
+                elif [ -e /etc/openvpn*.conf ]; then
+                        iface="tun"*
+                fi
+        fi
 ###default_path
 if [[ $iface == "wg"* ]]; then
         default_path="/etc/wireguard"
@@ -16,7 +23,7 @@ if  [ ! -e $default_path/route_default ]; then
 fi
 ### Grep VPN URL ###
 if [[ $iface == "wg"* ]]; then
-        url_grep=$(grep Endpoint /etc/wireguard/$iface.conf | awk -F'=' '{print $2}' | awk -F# '{gsub(/ /,"");print ($1) }' | awk -F ':' '{print $1}')
+        url_grep=$(grep Endpoint /etc/wireguard/*.conf | awk -F'=' '{print $2}' | awk -F# '{gsub(/ /,"");print ($1) }' | awk -F ':' '{print $1}')
 elif [[ $iface == "tun"* ]]; then
         url_grep=$(grep -i remote /etc/openvpn/*.conf | grep -vE 'cert|-random' |awk -F 'remote' '{print$2}' |awk '{print $1}' | head -1)
 fi
@@ -27,7 +34,8 @@ route_ip=$(grep default $default_path/route_default | awk '/default/ {print $3}'
 route_dev=$(grep default $default_path/route_default | awk '/default/ {print $5}')
 while true ; do
 ### interface check ###
-  check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+data_check=$check_vpn
 if  [ -n "$check_vpn" ]; then
 echo "//check_vpn $check_vpn"
 ### add default route
@@ -37,7 +45,7 @@ echo "//check_vpn $check_vpn"
         echo "//add_default "$route_ip" dev "$route_dev""
       fi
 ### check connect ###
-      ping_check=$(ping -c 2 -I $iface "$dns_ip" | grep time)
+      ping_check=$(ping -c 2 -I $data_check "$dns_ip" | grep time)
       if  [ -n "$ping_check" ]; then
         echo "//ping_check ok"
 ### lookup SRV IP ###
