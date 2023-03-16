@@ -47,13 +47,14 @@ while true ; do
         else
           dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*//)
           echo "//dns_v4"
-      fi
+         fi
       ### remove backup ###
       rem_backup_v4=$(ip route show | grep "$dns_v4" )
         if  [ -n "$rem_backup_v4" ]; then
           ip route del "$dns_v4"
           echo "//rem_backup"
         fi
+      fi
     else
       echo "Ping not  OK"
       if [[ $iface == "wg"* ]]; then
