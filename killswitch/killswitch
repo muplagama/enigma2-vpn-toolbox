@@ -109,7 +109,7 @@ echo "add dns_v4"
                 elif [[ $iface == "tun"* ]]; then
                 /etc/init.d/openvpn stop
 echo "stoping OpenVPN"
-                sleep 5
+                sleep 10
 #                if  [ -z "$iface" ]; then
                 /etc/init.d/openvpn start
 echo "starting OpenVPN"
