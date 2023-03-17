@@ -26,7 +26,7 @@ fi
 if [[ $iface == "wg"* ]]; then
         url_grep=$(grep Endpoint /etc/wireguard/*.conf | awk -F'=' '{print $2}' | awk -F# '{gsub(/ /,"");print ($1) }' | awk -F ':' '{print $1}')
 elif [[ $iface == "tun"* ]]; then
-        url_grep=$(grep -i remote /etc/openvpn/*.conf | grep -vE 'cert|-random' |awk -F 'remote' '{print$2}' |awk '{print $1}' | head -1)
+        url_grep=$(grep -i remote /etc/openvpn/*.conf | grep -vE 'cert|-random' |awk -F 'remote' '{print$2}' |awk '{print $1}' | head -n 1)
 fi
 ### Sets ###
 dns_ip=1.1.1.1
@@ -56,7 +56,7 @@ echo "//check_vpn $check_vpn"
                 dns_v4=$url_grep
                 echo "//dns_v4"
                 else
-                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -1)
+                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -n 1)
                 echo "//dns_v4"
                 fi
 ### remove backup ###
@@ -93,7 +93,7 @@ echo "add $dns_ip"
                 dns_v4=$url_grep
 echo "grep dns_v4 $dns_v4"
                 else
-                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -1)
+                dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -n 1)
 echo "grep dns_v4 $dns_v4"
                 fi
 ### delete dns_ip for Wireguard
@@ -123,7 +123,7 @@ echo "delete dns_ip OpenVPN $dns_ip"
                 iface_add_openvpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'tun')
 echo "grep iface_add_route $iface_add_openvpn"
                 sleep 1
-                ip_route_openvpn=$(ip route show | grep "dev tun" | awk '{print $1}' | awk -F '/' '{print $1}' | sed 's/\.[^.]*$/./' | head -1 )
+                ip_route_openvpn=$(ip route show | grep "dev tun" | awk '{print $1}' | awk -F '/' '{print $1}' | sed 's/\.[^.]*$/./' | head -n 1 )
 echo "request ip route $ip_route_openvpn"
                 ip route add 128.0.0.0/1 via "$ip_route_openvpn"1 dev $iface_add_openvpn
 echo "ip route add 128.0.0.0/1 via "$ip_route_openvpn"1 dev $iface_add_openvpn"
