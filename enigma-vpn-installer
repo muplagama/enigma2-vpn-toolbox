@@ -64,6 +64,8 @@ my_header() {
 	echo "+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+"
 	echo "|E|n|i|g|m|a|2| |N|e|t|w|o|r|k| |T|o|o|l|b|o|x|"
 	echo "+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+"
+	echo "                                   by tnl.ninja"
+        echo "                                               "
 }
 wrong_opt() {
         echo "Wrong option!"
