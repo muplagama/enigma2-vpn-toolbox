@@ -196,7 +196,7 @@ sed -i '/update-resolv-conf/d' /etc/openvpn/openvpn.conf
 sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
 sed -i '1a\log /tmp/openvpn.log' /etc/openvpn/openvpn.conf
 sed -i '1a\pull-filter ignore "route-ipv6"' /etc/openvpn/openvpn.conf
-sed -i '1a\pull-filter ignore "ifconfig-ipv6""' /etc/openvpn/openvpn.conf
+sed -i '1a\pull-filter ignore "ifconfig-ipv6"' /etc/openvpn/openvpn.conf
 
 chmod 644 /etc/openvpn/openvpn.conf
 }
