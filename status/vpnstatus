@@ -21,7 +21,7 @@ interface_check() {
 }
 link_check(){
 	echo -e "${ORANGE}$iface link check${NC}"
-        link=$( ping -c 3 -I $iface 1.1.1.1 | grep time | grep ttl | wc -l )
+        link=$( ping -c 3 -I $iface 1.0.0.1 | grep time | grep ttl | wc -l )
         if [ $link -eq 0 ]; then
                 echo -e "${RED} $iface VPN link check failed${NC}"
                 exit 0
