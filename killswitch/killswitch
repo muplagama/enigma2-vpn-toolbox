@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/bin/bash   
 clear
 ####Interface whois ###
 iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
         if  [ -z "$iface" ]; then
                 if [ -e /etc/wireguard/*conf ]; then
                         iface="wg"*
-                elif [ -e /etc/openvpn*.conf ]; then
+                elif [ -e /etc/openvpn/*.conf ]; then
                         iface="tun"*
                 fi
         fi
@@ -18,8 +18,9 @@ fi
 ### Save default route ###
 if  [ ! -e $default_path/route_default ]; then
         ip route show default | grep default > $default_path/route_default
+        echo "$default_path/route_default NOW set"
         else
-        echo "default already set"
+        echo "$default_path/route_default ALREADY set"
 fi
 ### Grep VPN URL ###
 if [[ $iface == "wg"* ]]; then
@@ -37,6 +38,7 @@ while true ; do
 check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
 data_check=$check_vpn
 if  [ -n "$check_vpn" ]; then
+echo "//check_vpn $check_vpn"
 echo "//check_vpn $check_vpn"
 ### add default route
       add_default=$(ip route show default | grep default)
@@ -57,11 +59,11 @@ echo "//check_vpn $check_vpn"
                 echo "//dns_v4"
                 fi
 ### remove backup ###
-                rem_backup_v4=$(ip route show | grep "$dns_v4" )
-                if  [ -n "$rem_backup_v4" ]; then
-                ip route del "$dns_v4"
-                echo "//rem_backup"
-                fi
+#                rem_backup_v4=$(ip route show | grep "$dns_v4" )
+#                if  [ -n "$rem_backup_v4" ]; then
+#                ip route del "$dns_v4"
+#                echo "//rem_backup"
+#                fi
         else
                 echo "ping_check not OK"
                 if [[ $iface == "wg"* ]]; then
@@ -72,7 +74,6 @@ echo "//check_vpn $check_vpn"
         fi
 
  else
-
 ### remove default route ###
                 del_default=$(ip route show default | grep default)
                 if  [ -n "$del_default" ]; then
@@ -95,13 +96,17 @@ echo "//check_vpn $check_vpn"
 ###  add backup route ###
                 add_backup_A=$(ip route show | grep "$dns_v4")
                 if  [ -z "$add_backup_A" ]; then
-                ip route add "$dns_v4" via "$route_ip" dev "$route_dev"
+                ip route add "$dns_v4"  via "$route_ip" dev "$route_dev"
                 fi
                 if [[ $iface == "wg"* ]]; then
                 /etc/init.d/wireguard restart
                 elif [[ $iface == "tun"* ]]; then
-                /etc/init.d/openvpn restart
-                sleep 3
+                /etc/init.d/openvpn stop
+                sleep 5
+                if  [ -z "$iface" ]; then
+                /etc/init.d/openvpn start
+                fi
+                sleep 5
                 fi
 fi
 done
