@@ -37,9 +37,13 @@ vpn_stop() {
         if  [ -n "$binary" ]; then
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -n "$iface" ]; then
+                echo -e "${GREEN}Stopping killswitch${NC}"
+                /etc/init.d/killswitch stop &>/dev/null &
+                echo -e "${GREEN}Stopping $binary${NC}"
                 /etc/init.d/$binary stop
                 elif [$binary=killswitch]; then
-                /etc/init.d/$binary stop
+                echo -e "${GREEN}Stopping killswitch${NC}"
+                /etc/init.d/$binary stop &>/dev/null &
                 else
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
@@ -88,8 +92,10 @@ vpn_remove() {
                 ip route add $route_default
                 if   [[ $binary == "wireguard" ]]; then
                 rm /etc/$binary/*
+                opkg -f remove wireguard-tools
                 elif [[ $binary == "openvpn" ]]; then
                 rm /etc/$binary/*
+                opkg -f remove openvpn
                 fi
         else
                 echo -e "${ORANGE}usage: vpn remove wireguard|openvpn|killswitch${NC}" >&2
@@ -97,7 +103,7 @@ vpn_remove() {
 }
 
 
-### Staus ###
+### status ###
 
 interface_check() {
         clear
