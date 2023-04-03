@@ -24,7 +24,7 @@ vpn_start() {
                 read  -p "start killswitch?    y/n : " bqdl </dev/tty
                 case $bqdl in
     [Yy]*)
-      /etc/init.d/killswitch start
+      /etc/init.d/killswitch start &>/dev/null &
       ;;
     *)
       exit 0
@@ -94,10 +94,10 @@ vpn_remove() {
                 killswitch_check=(pgrep killswitch)
                 if  [ -n  "$killswitch_check" ]; then
                 /etc/init.d/killswitch stop
-                update-rc.d -f killswitch remove
+                update-rc.d -f killswitch remove &>/dev/null &
                 fi
                 /etc/init.d/$binary stop
-                update-rc.d -f $binary remove
+                update-rc.d -f $binary remove &>/dev/null &
                 route_default=$(grep default /etc/$binary/route_default | grep default)
                 ip route add $route_default
                 if   [[ $binary == "wireguard" ]]; then
