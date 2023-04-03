@@ -77,8 +77,8 @@ sys_update() {
 }
 
 vpnstatus(){
-	wget -O /bin/vpnstatus https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpnstatus
-	chmod +x /bin/vpnstatus
+	wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn
+	chmod +x /bin/vpn
 }
 
 ### WireGuard ###
