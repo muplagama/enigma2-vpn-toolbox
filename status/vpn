@@ -24,7 +24,7 @@ vpn_start() {
                 echo -e "${RED}any vpn already running, please stop first${NC}"
                 fi
         else
-        echo -e "${ORANGE}usage: vpn start wireguard | vpn start openvpn | vpn start killswitch${NC}" >&2
+        echo -e "${ORANGE}usage: vpn start wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
 
@@ -41,7 +41,7 @@ vpn_stop() {
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
         else
-        echo -e "${ORANGE}usage: vpn stop wireguard | vpn stop openvpn | vpn stop killswitch${NC}" >&2
+        echo -e "${ORANGE}usage: vpn stop wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
 
@@ -53,7 +53,7 @@ vpn_enable() {
                 update-rc.d $binary defaults
                 /etc/init.d/$binary start
         else
-                echo -e "${ORANGE}usage: vpn enable wireguard | vpn enable openvpn | vpn enable killswitch${NC}" >&2
+                echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
 
@@ -65,7 +65,7 @@ vpn_disable() {
                 /etc/init.d/$binary stop
                 update-rc.d -f $binary remove
         else
-                echo -e "${ORANGE}usage: vpn disable wireguard | vpn disable openvpn | vpn disable killswitch${NC}" >&2
+                echo -e "${ORANGE}usage: vpn disable wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
 
@@ -89,7 +89,7 @@ vpn_remove() {
                 rm /etc/$binary/*
                 fi
         else
-                echo -e "${ORANGE}usage: vpn remove wireguard | vpn remove openvpn | vpn remove killswitch${NC}" >&2
+                echo -e "${ORANGE}usage: vpn remove wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
 
@@ -154,7 +154,8 @@ case "$1" in
         location_check
         ;;
     *)
-    echo "usage: $0 start|stop|restart|enable|disable|version|info" >&2
+    echo "vpn start|stop|restart|enable|disable" >&2
+    echo "vpn status" >&2
     exit 1
    ;;
   esac
