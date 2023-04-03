@@ -47,13 +47,11 @@ vpn_stop() {
         if  [ -n "$binary" ]; then
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -n "$iface" ]; then
-                echo -e "${GREEN}Stopping killswitch${NC}"
                 /etc/init.d/killswitch stop &>/dev/null &
                 echo -e "${GREEN}Stopping $binary${NC}"
                 /etc/init.d/$binary stop
                 elif [$binary=killswitch]; then
-                echo -e "${GREEN}Stopping killswitch${NC}"
-                /etc/init.d/$binary stop &>/dev/null &
+                /etc/init.d/killswitch stop &>/dev/null &
                 else
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
@@ -152,6 +150,10 @@ location_check(){
         vpn_city=$(curl -s ipinfo.io/city)
         echo -e "${GREEN} VPN City:     "$vpn_city"${NC}"
 }
+ks_status(){
+
+}
+
 
 case "$1" in
         start)
