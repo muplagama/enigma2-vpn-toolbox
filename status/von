@@ -1,0 +1,161 @@
+#!/bin/bash
+RED='\033[0;31m'
+ORANGE='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+### binary select ###
+if   [[ $2 == "wireguard" ]]; then
+        binary="wireguard"
+elif [[ $2 == "openvpn" ]]; then
+        binary="openvpn"
+elif [[ $2 == "killswitch" ]]; then
+        binary="killswitch"
+fi
+
+### start ###
+
+vpn_start() {
+        if  [ -n "$binary" ]; then
+        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                if  [ -z "$iface" ]; then
+                /etc/init.d/$binary start
+                else
+                echo -e "${RED}any vpn already running, please stop first${NC}"
+                fi
+        else
+        echo -e "${ORANGE}usage: vpn start wireguard | vpn start openvpn | vpn start killswitch${NC}" >&2
+        fi
+}
+
+### stop ###
+
+vpn_stop() {
+        if  [ -n "$binary" ]; then
+        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                if  [ -n "$iface" ]; then
+                /etc/init.d/$binary stop
+                elif [$binary=killswitch]; then
+                /etc/init.d/$binary stop
+                else
+                echo -e "${RED}no running vpn interface found${NC}"
+                fi
+        else
+        echo -e "${ORANGE}usage: vpn stop wireguard | vpn stop openvpn | vpn stop killswitch${NC}" >&2
+        fi
+}
+
+### enable ###
+
+vpn_enable() {
+        if  [ -n "$binary" ]; then
+                echo -e "${green}enable autostart for $binary${NC}"
+                update-rc.d $binary defaults
+                /etc/init.d/$binary start
+        else
+                echo -e "${ORANGE}usage: vpn enable wireguard | vpn enable openvpn | vpn enable killswitch${NC}" >&2
+        fi
+}
+
+### disable ###
+
+vpn_disable() {
+        if  [ -n "$binary" ]; then
+                echo -e "${green}remove autostart for $binary${NC}"
+                /etc/init.d/$binary stop
+                update-rc.d -f $binary remove
+        else
+                echo -e "${ORANGE}usage: vpn disable wireguard | vpn disable openvpn | vpn disable killswitch${NC}" >&2
+        fi
+}
+
+### remove ###
+
+vpn_remove() {
+        if  [ -n "$binary" ]; then
+                echo -e "${green}remove autostart for $binary${NC}"
+                killswitch_check=(pgrep killswitch)
+                if  [ -n  "$killswitch_check" ]; then
+                /etc/init.d/killswitch stop
+                update-rc.d -f killswitch remove
+                fi
+                /etc/init.d/$binary stop
+                update-rc.d -f $binary remove
+                route_default=$(grep default /etc/$binary/route_default | grep default)
+                ip route add $route_default
+                if   [[ $binary == "wireguard" ]]; then
+                rm /etc/$binary/*
+                elif [[ $binary == "openvpn" ]]; then
+                rm /etc/$binary/*
+                fi
+        else
+                echo -e "${ORANGE}usage: vpn remove wireguard | vpn remove openvpn | vpn remove killswitch${NC}" >&2
+        fi
+}
+
+
+### Staus ###
+
+interface_check() {
+        clear
+        echo ""
+        echo -e "${ORANGE}VPN status check${NC}"
+        echo ""
+        echo -e "${ORANGE}Interface status check${NC}"
+
+        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep wg; ip -o link show | awk -F': ' '{print $2}' | grep tun)
+        if  [ -n "$iface" ]; then
+                echo -e "${GREEN} $iface VPN Interface is up${NC}"
+        else
+                echo -e "${RED} $iface VPN Interface is down${NC}"
+        exit 0
+        fi
+}
+link_check(){
+        echo -e "${ORANGE}$iface link check${NC}"
+        link=$( ping -c 3 -I $iface 1.0.0.1 | grep time | grep ttl | wc -l )
+        if [ $link -eq 0 ]; then
+                echo -e "${RED} $iface VPN link check failed${NC}"
+                exit 0
+        else
+                echo -e "${GREEN} $iface VPN link check success${NC}"
+        fi
+}
+
+location_check(){
+        echo -e "${ORANGE}$iface VPN location check${NC}"
+        vpn_ip=$(curl -s ipinfo.io/ip)
+        echo -e "${GREEN} VPN IP:       "$vpn_ip"${NC}"
+        vpn_country=$(curl -s ipinfo.io/country)
+        echo -e "${GREEN} VPN Country:  "$vpn_country"${NC}"
+        vpn_city=$(curl -s ipinfo.io/city)
+        echo -e "${GREEN} VPN City:     "$vpn_city"${NC}"
+}
+
+case "$1" in
+        start)
+        vpn_start
+        ;;
+        stop)
+        vpn_stop
+        ;;
+        enable)
+        vpn_enable
+        ;;
+        disable)
+        vpn_disable
+        ;;
+        remove)
+        vpn_remove
+        ;;
+        status)
+        interface_check
+        link_check
+        location_check
+        ;;
+    *)
+    echo "usage: $0 start|stop|restart|enable|disable|version|info" >&2
+    exit 1
+   ;;
+  esac
+  exit 0
