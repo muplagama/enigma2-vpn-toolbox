@@ -20,6 +20,16 @@ vpn_start() {
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -z "$iface" ]; then
                 /etc/init.d/$binary start
+                echo ""               
+                read  -p "start killswitch?    y/n : " bqdl </dev/tty
+                case $bqdl in
+    [Yy]*)
+      /etc/init.d/killswitch start
+      ;;
+    *)
+      exit 0
+      ;;
+  esac
                 elif [[ $binary == "killswitch" ]]; then
                 /etc/init.d/$binary start &>/dev/null &
                 else
