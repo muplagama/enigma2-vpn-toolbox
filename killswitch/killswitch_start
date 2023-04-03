@@ -1,0 +1,28 @@
+#!/bin/bash
+  VNAME="Enigma2 VPN Killswitch"
+  VINFO="Killswitch V1.4"
+  NAME=killswitch
+    case "$1" in
+    start)
+    $NAME
+    ;;
+   stop)
+     pkill killswitch
+    ;;
+    restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+    version)
+    echo "$VNAME"
+    ;;
+    info)
+    echo "$VINFO"
+    ;;
+    *)
+      echo "usage: $0 start|stop|restart" >&2
+    exit 1
+   ;;
+  esac
+  exit 0
