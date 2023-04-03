@@ -10,21 +10,21 @@ menu_check_av_wg=$(opkg list wireguard-tools | grep wireguard-tools)
         if  [ -n "$menu_check_av_wg" ]
                 then
                         echo -e "${GREEN}1) WireGuard install                // opkg based systems ${NC}"
-                        echo -e "${GREEN}2) WireGuard Killswitch             // opkg based systems ${NC}"
+                       
                 else
                         echo -e "${RED}1) WireGuard install (not possible)    // opkg based systems${NC}"
-                        echo -e "${RED}2) WireGuard Killswitch (not possible) // opkg based systems${NC}"
+                        
         fi
 }
 ovpn_menu_check() {
 menu_check_av_ovpn=$(opkg list openvpn | grep openvpn)
         if  [ -n "$menu_check_av_ovpn" ]
                 then
-                        echo -e "${GREEN}4) OpenVPN install		       // opkg based systems${NC}"
-                        echo -e "${GREEN}5) OpenVPN Killswitch (coming soon)  // opkg based systems${NC}"
+                        echo -e "${GREEN}2) OpenVPN install		       // opkg based systems${NC}"
+                        
                 else
-                        echo -e "${RED}4) OpenVPN install                      // opkg based systems${NC}"
-                        echo -e "${RED}5) OpenVPN Killswitch (not possible)   // opkg based systems${NC}"
+                        echo -e "${RED}2) OpenVPN install (not possible)                     // opkg based systems${NC}"
+                        
         fi
 }
 
@@ -131,23 +131,15 @@ ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
         fi
 }
 
-### WireGuard Killswitch ###
-wg_ks_download() {
-check_wg_ks=$(opkg list-installed wireguard-tools | grep wireguard)
-	if [ -n "$check_wg_ks" ]
-		then
+ks_download() {
 	        echo -e "${GREEN}...download files${NC}"
 		sleep 1
-		wget -O /etc/wireguard/killswitch.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/wg_killswitch/killswitch.sh  > /dev/null 2>&1
-		chmod +x /etc/wireguard/killswitch.sh
-		wget -O /etc/init.d/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/wg_killswitch/killswitch > /dev/null 2>&1
+		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
+		chmod +x /bin/killswitch
+		wget -O /etc/init.d/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
 		chmod +x /etc/init.d/killswitch
-		else
-		echo -e "${RED}Error! No WireGuard installation found.. please install before!${NC}"
-		sleep 5
-		exit 0
-	fi
-}
+		}
+		
 enable_wg_ks() {
 	echo -e "${GREEN}...enable autostart${NC}"
 	sleep 2
@@ -253,11 +245,9 @@ echo -e ""
 echo -e "##### Menu #####"
 echo -e ""
 wg_menu_check
-echo -e "3) uninstall WireGuard Killswitch"
-echo -e ""
 ovpn_menu_check
 echo -e ""
-echo -e "6) VPN Manager + Wireguard - DM One/Two // TESTING"
+#echo -e "6) VPN Manager + Wireguard - DM One/Two // TESTING"
 echo -e "0) Exit"
 echo -e ""
 read -p "choose an Option: " main </dev/tty
@@ -271,29 +261,21 @@ case $main in
         wg_start
         wg_check_connect
 	vpnstatus
+	ks_download
         mainmenu
         ;;
 2)
-	wg_ks_download
-	enable_wg_ks
-	check_wg_ks
-        mainmenu
-        ;;
-3)
-	uninstall_wg_ks
-	mainmenu
-	;;
-4)
 	ovpn_proof_inst
 	ovpn_read_conf
 	ovpn_user_pass
 	vpnstatus
+	ks_download
 	mainmenu
         ;;
-5)
+3)
         mainmenu
         ;;
-6)	
+4)	
 	dreambox_install
 	mainmenu
 	;;
