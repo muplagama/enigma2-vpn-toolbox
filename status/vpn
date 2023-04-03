@@ -151,8 +151,14 @@ location_check(){
         vpn_city=$(curl -s ipinfo.io/city)
         echo -e "${GREEN} VPN City:     "$vpn_city"${NC}"
 }
-ks_status(){
-
+ks_check(){ 
+        echo -e "${ORANGE}$iface VPN killswitch check${NC}"
+        check_ks=$(pgrep killswitch)
+        if  [ -n  "$check_ks" ]; then
+                echo -e "${GREEN} Killswitch is running.${NC}"
+        else
+                echo -e "${RED} Killswitch not running.${NC}"
+        fi
 }
 
 
@@ -176,9 +182,14 @@ case "$1" in
         interface_check
         link_check
         location_check
+        ks_check
         ;;
     *)
-    echo "vpn start|stop|restart|enable|disable" >&2
+    echo "usage:"
+    echo "vpn start wireguard|openvpn|killswitch">&2
+    echo "vpn stop wireguard|openvpn|killswitch">&2
+    echo "vpn enable wireguard|openvpn|killswitch">&2
+    echo "vpn disable wireguard|openvpn|killswitch">&2
     echo "vpn status" >&2
     exit 1
    ;;
