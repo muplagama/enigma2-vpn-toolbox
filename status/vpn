@@ -20,6 +20,8 @@ vpn_start() {
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -z "$iface" ]; then
                 /etc/init.d/$binary start
+                elif [[ $binary == "killswitch" ]]; then
+                /etc/init.d/$binary start &>/dev/null &
                 else
                 echo -e "${RED}any vpn already running, please stop first${NC}"
                 fi
@@ -27,6 +29,7 @@ vpn_start() {
         echo -e "${ORANGE}usage: vpn start wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
+
 
 ### stop ###
 
