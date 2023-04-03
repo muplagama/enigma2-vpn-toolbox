@@ -92,10 +92,12 @@ vpn_remove() {
                 ip route add $route_default
                 if   [[ $binary == "wireguard" ]]; then
                 rm /etc/$binary/*
-                opkg -f remove wireguard-tools
+                echo -e "${ORANGE}remove WireGuard${NC}" >&2
+                opkg remove wireguard-tools
                 elif [[ $binary == "openvpn" ]]; then
                 rm /etc/$binary/*
-                opkg -f remove openvpn
+                echo -e "${ORANGE}remove OpenVPN${NC}" >&2
+                opkg remove openvpn
                 fi
         else
                 echo -e "${ORANGE}usage: vpn remove wireguard|openvpn|killswitch${NC}" >&2
