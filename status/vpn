@@ -40,23 +40,44 @@ vpn_start() {
 }
 ### stop ###
 vpn_stop() {
-        if  [ -n "$binary" ]; then
+        if [[ $binary == "wireguard" ]]; then
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -n "$iface" ]; then
+                        echo -e "${ORANGE}stop killswitch${NC}" >&2
                         /etc/init.d/tnl_ks stop &>/dev/null &
-                                if  [ -e /etc/init.d/wiregaurd/route_default ]; then
-                                echo -e "${ORANGE}restore default route${NC}" >&2
-                                route_default=$(grep default /etc/wireguard/route_default | grep default)
-                                ip route add $route_default &>/dev/null &
-                                elif [ -e /etc/init.d/openvpn/route_default ]; then
-                                echo -e "${ORANGE}restore default route${NC}" >&2
-                                route_default=$(grep default /etc/openvpn/route_default | grep default)
-                                ip route add $route_default &>/dev/null &
-                                fi
+                        echo -e "${ORANGE}restore default route${NC}" >&2
+                        route_default=$(grep default /etc/wireguard/route_default | grep default)
+                        ip route add $route_default &>/dev/null &
                         echo -e "${ORANGE}stopping $binary${NC}"
-                        etc/init.d/$binary stop &>/dev/null &
+                        /etc/init.d/$binary stop &>/dev/null &
                         echo -e "${ORANGE}restarting network $binary${NC}"
                         /etc/init.d/networking restart &>/dev/null &
+                fi      
+        elif [[ $binary == "openvpn" ]]; then          
+        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                if  [ -n "$iface" ]; then   
+                        echo -e "${ORANGE}stop killswitch${NC}" >&2
+                        /etc/init.d/tnl_ks stop &>/dev/null &
+                        echo -e "${ORANGE}restore default route${NC}" >&2
+                        route_default=$(grep default /etc/openvpn/route_default | grep default)
+                        ip route add $route_default &>/dev/null &
+                        echo -e "${ORANGE}stopping $binary${NC}"
+                        /etc/init.d/$binary stop &>/dev/null &
+                        echo -e "${ORANGE}restarting network $binary${NC}"
+                        /etc/init.d/networking restart &>/dev/null &
+                fi
+        elif [[ $binary == "tnl_ks" ]]; then
+                         echo -e "${ORANGE}stopping Killswitch${NC}" >&2
+                         /etc/init.d/tnl_ks stop &>/dev/null &
+                         if [ -e /etc/init.d/wiregaurd/route_default ]; then
+                            echo -e "${ORANGE}restore default route${NC}" >&2
+                            route_default=$(grep default /etc/wireguard/route_default | grep default)
+                            ip route add $route_default &>/dev/null &
+                         elif [ -e /etc/init.d/openvpn/route_default ]; then
+                            echo -e "${ORANGE}restore default route${NC}" >&2
+                            route_default=$(grep default /etc/openvpn/route_default | grep default)
+                            ip route add $route_default &>/dev/null &
+                         fi  
                 else
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
