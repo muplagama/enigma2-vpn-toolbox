@@ -48,6 +48,8 @@ vpn_stop() {
                 ip route add $route_default &>/dev/null &
                 echo -e "${ORANGE}stopping $binary${NC}"
                 /etc/init.d/$binary stop &>/dev/null &
+                echo -e "${ORANGE}restarting network $binary${NC}"
+                /etc/init.d/networking restart &>/dev/null &
                 elif [$binary=tnl_ks]; then
                 echo -e "${ORANGE}stopping $binary${NC}"
                 /etc/init.d/tnl_ks stop &>/dev/null &
@@ -106,10 +108,14 @@ vpn_disable() {
                         echo -e "${ORANGE}restore default route${NC}" >&2
                         route_default=$(grep default /etc/wireguard/route_default | grep default)
                         ip route add $route_default &>/dev/null &
+                        echo -e "${ORANGE}restarting network $binary${NC}"
+                        /etc/init.d/networking restart &>/dev/null &
                         elif [ -e /etc/init.d/openvpn/route_default ]; then
                         echo -e "${ORANGE}restore default route${NC}" >&2
                         route_default=$(grep default /etc/openvpn/route_default | grep default)
                         ip route add $route_default &>/dev/null &
+                        echo -e "${ORANGE}restarting network $binary${NC}"
+                        /etc/init.d/networking restart &>/dev/null &
                         fi
         else
                 echo -e "${ORANGE}usage: vpn disable wireguard|openvpn|killswitch${NC}" >&2
@@ -120,12 +126,11 @@ vpn_disable() {
 
 vpn_remove() {
         if  [ -n "$binary" ]; then
-                clear
                 echo -e "${ORANGE}remove autostart for $binary${NC}"
                 killswitch_check=(pgrep killswitch)
                 if  [ -n  "$killswitch_check" ]; then
-                /etc/init.d/tnl_ks stop &>/dev/null &
                 update-rc.d -f tnl_ks remove &>/dev/null &
+                /etc/init.d/tnl_ks stop
                 rm /etc/init.d/tnl_ks &>/dev/null &
                 rm /bin/killswitch &>/dev/null &
                 fi
