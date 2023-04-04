@@ -6,8 +6,8 @@
     start)
     $NAME
     ;;
-   stop)
-     pkill killswitch
+    stop)
+    pkill killswitch
     ;;
     restart)
     $0 stop
