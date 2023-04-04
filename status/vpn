@@ -47,11 +47,19 @@ vpn_stop() {
         if  [ -n "$binary" ]; then
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -n "$iface" ]; then
+                echo -e "${ORANGE}stopping killswitch if used${NC}"
                 /etc/init.d/tnl_ks stop &>/dev/null &
-                echo -e "${GREEN}Stopping $binary${NC}"
-                /etc/init.d/$binary stop
+                echo -e "${ORANGE}restore default route${NC}" >&2
+                route_default=$(grep default /etc/$binary/route_default | grep default)
+                ip route add $route_default &>/dev/null &
+                echo -e "${ORANGE}stopping $binary${NC}"
+                /etc/init.d/$binary stop &>/dev/null &
                 elif [$binary=tnl_ks]; then
+                echo -e "${ORANGE}stopping $binary${NC}"
                 /etc/init.d/tnl_ks stop &>/dev/null &
+                echo -e "${ORANGE}restore default route${NC}" >&2
+                route_default=$(grep default /etc/$binary/route_default | grep default)
+                ip route add $route_default &>/dev/null &
                 else
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
@@ -64,8 +72,9 @@ vpn_stop() {
 
 vpn_enable() {
         if  [ -n "$binary" ]; then
-                echo -e "${green}enable autostart for $binary${NC}"
-                update-rc.d $binary defaults
+                echo -e "${ORANGE}enable autostart for $binary${NC}"
+                update-rc.d $binary defaults &>/dev/null &
+                echo -e "${ORANGE}starting $binary${NC}"
                 /etc/init.d/$binary start &>/dev/null &
         else
                 echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
@@ -76,9 +85,10 @@ vpn_enable() {
 
 vpn_disable() {
         if  [ -n "$binary" ]; then
-                echo -e "${green}remove autostart for $binary${NC}"
-                /etc/init.d/$binary stop
-                update-rc.d -f $binary remove
+                echo -e "${ORANGE}stop $binary${NC}"
+                /etc/init.d/$binary stop &>/dev/null &
+                echo -e "${ORANGE}remove autostart for $binary${NC}"
+                update-rc.d -f $binary remove &>/dev/null &
         else
                 echo -e "${ORANGE}usage: vpn disable wireguard|openvpn|killswitch${NC}" >&2
         fi
@@ -98,6 +108,7 @@ vpn_remove() {
                 fi
                 /etc/init.d/$binary stop &>/dev/null &
                 update-rc.d -f $binary remove &>/dev/null &
+                echo -e "${ORANGE}restore default route${NC}" >&2
                 route_default=$(grep default /etc/$binary/route_default | grep default)
                 ip route add $route_default &>/dev/null &
                 if   [[ $binary == "wireguard" ]]; then
