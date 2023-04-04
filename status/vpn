@@ -102,6 +102,15 @@ vpn_disable() {
                 /etc/init.d/$binary stop &>/dev/null &
                 echo -e "${ORANGE}remove autostart for $binary${NC}"
                 update-rc.d -f $binary remove &>/dev/null &
+                        if  [ -e /etc/init.d/wiregaurd/route_default ]; then
+                        echo -e "${ORANGE}restore default route${NC}" >&2
+                        route_default=$(grep default /etc/wireguard/route_default | grep default)
+                        ip route add $route_default &>/dev/null &
+                        elif [ -e /etc/init.d/openvpn/route_default ]; then
+                        echo -e "${ORANGE}restore default route${NC}" >&2
+                        route_default=$(grep default /etc/openvpn/route_default | grep default)
+                        ip route add $route_default &>/dev/null &
+                        fi
         else
                 echo -e "${ORANGE}usage: vpn disable wireguard|openvpn|killswitch${NC}" >&2
         fi
@@ -118,6 +127,7 @@ vpn_remove() {
                 /etc/init.d/tnl_ks stop &>/dev/null &
                 update-rc.d -f tnl_ks remove &>/dev/null &
                 rm /etc/init.d/tnl_ks &>/dev/null &
+                rm /bin/killswitch &>/dev/null &
                 fi
                 /etc/init.d/$binary stop &>/dev/null &
                 update-rc.d -f $binary remove &>/dev/null &
