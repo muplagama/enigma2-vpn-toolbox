@@ -198,7 +198,7 @@ ks_check(){
         if  [ -n  "$check_ks" ]; then
                 echo -e "${GREEN} Killswitch is running.${NC}"
         else
-                echo -e "${RED} Killswitch not running.${NC}"
+                echo -e "${RED} Killswitch not running. Type "vpn enable killswitch" to enable${NC}"
         fi
 }
 
