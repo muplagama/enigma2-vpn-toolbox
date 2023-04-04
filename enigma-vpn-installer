@@ -188,9 +188,9 @@ chmod 644 /etc/openvpn/auth_pass
 
 ovpn_start() {
         echo -e "${GREEN}...install update-rc.d${NC}"
-        opkg install update-rc.d > /dev/null 2>&1
+        opkg install update-rc.d > &>/dev/null &
         echo -e "${GREEN}...enable startscript${NC}"
-	update-rc.d openvpn defaults
+	update-rc.d openvpn defaults &>/dev/null &
 	sleep 1
         /etc/init.d/openvpn start
 }
