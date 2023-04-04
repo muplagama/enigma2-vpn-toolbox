@@ -88,25 +88,26 @@ vpn_disable() {
 
 vpn_remove() {
         if  [ -n "$binary" ]; then
-                echo -e "${green}remove autostart for $binary${NC}"
+                clear
+                echo -e "${ORANGE}remove autostart for $binary${NC}"
                 killswitch_check=(pgrep killswitch)
                 if  [ -n  "$killswitch_check" ]; then
-                /etc/init.d/tnl_ks stop
+                /etc/init.d/tnl_ks stop &>/dev/null &
                 update-rc.d -f tnl_ks remove &>/dev/null &
-                rm /etc/init.d/tnl_ks
+                rm /etc/init.d/tnl_ks &>/dev/null &
                 fi
-                /etc/init.d/$binary stop
+                /etc/init.d/$binary stop &>/dev/null &
                 update-rc.d -f $binary remove &>/dev/null &
                 route_default=$(grep default /etc/$binary/route_default | grep default)
-                ip route add $route_default
+                ip route add $route_default &>/dev/null &
                 if   [[ $binary == "wireguard" ]]; then
                 rm /etc/$binary/*
                 echo -e "${ORANGE}remove WireGuard${NC}" >&2
-                opkg remove wireguard-tools
+                opkg remove wireguard-tools &>/dev/null &
                 elif [[ $binary == "openvpn" ]]; then
                 rm /etc/$binary/*
                 echo -e "${ORANGE}remove OpenVPN${NC}" >&2
-                opkg remove openvpn
+                opkg remove openvpn &>/dev/null &
                 fi
                 rm /bin/vpn
         else
