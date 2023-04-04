@@ -51,6 +51,15 @@ vpn_stop() {
                 elif [$binary=tnl_ks]; then
                 echo -e "${ORANGE}stopping $binary${NC}"
                 /etc/init.d/tnl_ks stop &>/dev/null &
+                        if  [ -e /etc/init.d/wiregaurd/route_default ]; then
+                        echo -e "${ORANGE}restore default route${NC}" >&2
+                        route_default=$(grep default /etc/wireguard/route_default | grep default)
+                        ip route add $route_default &>/dev/null &
+                        elif [ -e /etc/init.d/openvpn/route_default ]; then
+                        echo -e "${ORANGE}restore default route${NC}" >&2
+                        route_default=$(grep default /etc/openvpn/route_default | grep default)
+                        ip route add $route_default &>/dev/null &
+                        fi
                 else
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
