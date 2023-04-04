@@ -136,33 +136,10 @@ ks_download() {
 		sleep 1
 		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
 		chmod +x /bin/killswitch
-		wget -O /etc/init.d/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
-		chmod +x /etc/init.d/killswitch
+		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
+		chmod +x /etc/init.d/tnl_ks
 		}
-		
-enable_wg_ks() {
-	echo -e "${GREEN}...enable autostart${NC}"
-	sleep 2
-	/etc/init.d/killswitch enable  > /dev/null 2>&1
-}
-check_wg_ks() {
-	check_wg_ks_ps=$(pgrep killswitch.sh)
-	if  [ -n  "$check_wg_ks_ps" ]
-	then
-        	echo -e "${GREEN}Success: Killswitch is running.${NC}"
-        	sleep 5
-	else
-		echo -e "${RED}Error! Killswitch not running.${NC}"
-		sleep 5
-	fi
-}
 
-
-uninstall_wg_ks() {
-        echo -e "${GREEN}...uninstall WireGuard killswitch${NC}"
-        sleep 2
-        /etc/init.d/killswitch uninstall  > /dev/null 2>&1
-}
 ##### OpenVPN
 ovpn_proof_inst() {
         echo -e "${ORANGE}checking system compatibility...${NC}"
@@ -209,6 +186,27 @@ EOF
 chmod 644 /etc/openvpn/auth_pass
 }
 
+ovpn_start() {
+        echo -e "${GREEN}...install update-rc.d${NC}"
+        opkg install update-rc.d > /dev/null 2>&1
+        echo -e "${GREEN}...enable startscript${NC}"
+	update-rc.d openvpn defaults
+	sleep 1
+        /etc/init.d/openvpn start
+}
+
+ovpn_check_connect() {
+sleep 5
+ping_check=$(ping -c 2 -I tun0 "1.1.1.1" | grep time)
+        if  [ -n "$ping_check" ]
+                then
+                        echo -e "${GREEN}OpenVPN is up${NC}"
+			sleep 10
+                else
+                        echo -e "${RED}Error! OpenVPN is down${NC}"
+			sleep 10
+        fi
+}
 
 ##### Dreambox VPN Manager
 dreambox_install() {
@@ -268,6 +266,8 @@ case $main in
 	ovpn_proof_inst
 	ovpn_read_conf
 	ovpn_user_pass
+	ovpn_start
+	ovpn_check_connect
 	vpnstatus
 	ks_download
 	mainmenu
