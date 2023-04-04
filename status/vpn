@@ -10,7 +10,7 @@ if   [[ $2 == "wireguard" ]]; then
 elif [[ $2 == "openvpn" ]]; then
         binary="openvpn"
 elif [[ $2 == "killswitch" ]]; then
-        binary="killswitch"
+        binary="tnl_ks"
 fi
 
 ### start ###
@@ -24,13 +24,13 @@ vpn_start() {
                 read  -p "start killswitch?    y/n : " bqdl </dev/tty
                 case $bqdl in
     [Yy]*)
-      /etc/init.d/killswitch start &>/dev/null &
+      /etc/init.d/tnl_ks start &>/dev/null &
       ;;
     *)
       exit 0
       ;;
   esac
-                elif [[ $binary == "killswitch" ]]; then
+                elif [[ $binary == "tnl_ks" ]]; then
                 /etc/init.d/$binary start &>/dev/null &
                 else
                 echo -e "${RED}any vpn already running, please stop first${NC}"
@@ -47,11 +47,11 @@ vpn_stop() {
         if  [ -n "$binary" ]; then
         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if  [ -n "$iface" ]; then
-                /etc/init.d/killswitch stop &>/dev/null &
+                /etc/init.d/tnl_ks stop &>/dev/null &
                 echo -e "${GREEN}Stopping $binary${NC}"
                 /etc/init.d/$binary stop
-                elif [$binary=killswitch]; then
-                /etc/init.d/killswitch stop &>/dev/null &
+                elif [$binary=tnl_ks]; then
+                /etc/init.d/tnl_ks stop &>/dev/null &
                 else
                 echo -e "${RED}no running vpn interface found${NC}"
                 fi
@@ -91,8 +91,9 @@ vpn_remove() {
                 echo -e "${green}remove autostart for $binary${NC}"
                 killswitch_check=(pgrep killswitch)
                 if  [ -n  "$killswitch_check" ]; then
-                /etc/init.d/killswitch stop
-                update-rc.d -f killswitch remove &>/dev/null &
+                /etc/init.d/tnl_ks stop
+                update-rc.d -f tnl_ks remove &>/dev/null &
+                rm /etc/init.d/tnl_ks
                 fi
                 /etc/init.d/$binary stop
                 update-rc.d -f $binary remove &>/dev/null &
