@@ -231,8 +231,10 @@ vpn_remove() {
                         
                  elif [[ $binary == "tnl_ks" ]]; then
                         vpn disable killswitch
+                        echo -e "${ORANGE}cleaning files ${NC}"
                         rm /bin/killswitch &>/dev/null &
                         rm /etc/init.d/tnl_ks &>/dev/null &
+                        echo -e "${GREEN}done${NC}" >&2
                  fi
                 
         else
