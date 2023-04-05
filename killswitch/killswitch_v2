@@ -63,7 +63,6 @@ echo "//check_vpn $check_vpn"
                 if [[ $iface == "wg"* ]]; then
                 rem_backup_v4=$(ip route show | grep "$dns_v4" )
                 if  [ -n "$rem_backup_v4" ]; then
-                ip route del "$dns_v4"
                 echo "//rem_backup"
                 fi
                 fi

@@ -110,10 +110,10 @@ sed -i '/^PrivateKey.*/a PreUP = \/etc\/wireguard\/pre_up.sh' /etc/wireguard/wg0
 sed -i '/^Endpoint.*/a AllowedIPs = 0.0.0.0\/1\,128.0.0.0\/1' /etc/wireguard/wg0.conf
 }
 
-wget -O /etc/wireguard/pre_up.sh  https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh
-chmod +x /etc/wireguard/pre_up.sh
 
 wg_start() {
+  wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh
+  chmod +x /etc/wireguard/pre_up.sh
         echo -e "${GREEN}...install update-rc.d${NC}"
         opkg install update-rc.d > /dev/null 2>&1
         echo -e "${GREEN}...create startscript${NC}"
