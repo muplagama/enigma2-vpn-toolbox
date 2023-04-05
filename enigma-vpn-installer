@@ -261,9 +261,10 @@ case $main in
         wg_proof_inst
         wg_read_conf
         wg_trim_conf
-        wg_start
+        vpnstatus
+	ks_download
+	wg_start
         wg_check_connect
-	vpnstatus
 	ks_download
         mainmenu
         ;;
