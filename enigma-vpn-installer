@@ -267,6 +267,7 @@ case $main in
         vpnstatus
 	ks_download
 	wg_start
+	sleep 2
         wg_check_connect
 	mainmenu
         ;;
@@ -277,6 +278,7 @@ case $main in
 	vpnstatus
 	ks_download
 	ovpn_start
+	sleep 4
 	ovpn_check_connect
 	mainmenu
         ;;
