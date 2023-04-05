@@ -1,11 +1,13 @@
 # enigma2-vpn-toolbox
 
 ### Requirements:
-- a wireguard configuation
+- a wireguard configuration
+      or 
+- a openvpn configuation & username / password
 
 ### Installation:
 - connect to CLI
-- proof installation of bash
+- proof installation of bash & curl (eg. opkg install bash curl)
 - grap the commands and execute
 
 ```
