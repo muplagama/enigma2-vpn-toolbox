@@ -63,7 +63,7 @@ vpn_stop() {
                                 echo -e "${ORANGE}stopping $binary${NC}"
                                 /etc/init.d/$binary stop &>/dev/null &
                                 sleep 2
-                                echo -e "${ORANGE}restarting network $binary${NC}"
+                                echo -e "${ORANGE}restarting network${NC}"
                                 /etc/init.d/networking restart &>/dev/null &
                                 sleep 2
 
@@ -78,7 +78,7 @@ vpn_stop() {
                                 echo -e "${ORANGE}stopping $binary${NC}"
                                 /etc/init.d/$binary stop &>/dev/null &
                                 sleep 2
-                                echo -e "${ORANGE}restarting network $binary${NC}"
+                                echo -e "${ORANGE}restarting network${NC}"
                                 /etc/init.d/networking restart &>/dev/null &
                                 sleep 2
 
