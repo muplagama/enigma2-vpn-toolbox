@@ -35,8 +35,9 @@ OpenVPN installation possible!
 
 choose an Option: 
 ```
+### post installation
+
 ```
-### Control
 to control use the "vpn" command
 
 vpn start wireguard|openvpn|killswitch          // to start a vpn connection (killswitch can be start oprional)
