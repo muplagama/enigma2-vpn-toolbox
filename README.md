@@ -9,15 +9,10 @@
 - grap the commands and execute
 
 ```
-cd /tmp
-
 wget -qO /tmp/enigma-vpn-installer https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/enigma-vpn-installer 
-
-chmod +x /tmp/enigma-vpn-installer
-
-/tmp/enigma-vpn-installer
-
-
+```
+```
+chmod +x /tmp/enigma-vpn-installer; /tmp/enigma-vpn-installer
 ```
 
 ```
