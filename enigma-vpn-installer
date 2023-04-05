@@ -139,6 +139,8 @@ ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
 ks_download() {
 	        echo -e "${GREEN}...download files${NC}"
 		sleep 1
+    update-rc.d killswitch disable > /dev/null 2>&1
+    rm -rf /etc/init.d/killswitch > /dev/null 2>&1
 		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
 		chmod +x /bin/killswitch
 		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
