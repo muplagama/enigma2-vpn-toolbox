@@ -267,8 +267,7 @@ case $main in
 	ks_download
 	wg_start
         wg_check_connect
-	ks_download
-        mainmenu
+	mainmenu
         ;;
 2)
 	ovpn_proof_inst
