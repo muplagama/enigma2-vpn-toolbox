@@ -96,7 +96,6 @@ vpn_stop() {
         fi
 }
 ### enable ###
-
 vpn_enable() {
          if  [ -n "$binary" ]; then
                 if  [[ $binary == "openvpn" ]]; then
@@ -179,58 +178,63 @@ vpn_enable() {
 }
 
 ### disable ###
-
 vpn_disable() {
         if  [ -n "$binary" ]; then
-                echo -e "${ORANGE}stop $binary${NC}"
-                /etc/init.d/$binary stop &>/dev/null &
-                echo -e "${ORANGE}remove autostart for $binary${NC}"
-                update-rc.d -f $binary remove &>/dev/null &
-                        if  [ -e /etc/init.d/wiregaurd/route_default ]; then
-                        echo -e "${ORANGE}restore default route${NC}" >&2
-                        route_default=$(grep default /etc/wireguard/route_default | grep default)
-                        ip route add $route_default &>/dev/null &
-                        echo -e "${ORANGE}restarting network $binary${NC}"
-                        /etc/init.d/networking restart &>/dev/null &
-                        elif [ -e /etc/init.d/openvpn/route_default ]; then
-                        echo -e "${ORANGE}restore default route${NC}" >&2
-                        route_default=$(grep default /etc/openvpn/route_default | grep default)
-                        ip route add $route_default &>/dev/null &
-                        echo -e "${ORANGE}restarting network $binary${NC}"
-                        /etc/init.d/networking restart &>/dev/null &
-                        fi
+                if  [[ $binary == "openvpn" ]]; then
+                        vpn stop openvpn
+                        echo -e "${ORANGE}remove autostart for $binary${NC}"
+                        update-rc.d -f $binary remove &>/dev/null &
+                        update-rc.d -f tnl_ks remove &>/dev/null &
+                
+                elif [[ $binary == "wireguard" ]]; then
+                        vpn stop wireguard
+                        echo -e "${ORANGE}remove autostart for $binary${NC}"
+                        update-rc.d -f $binary remove &>/dev/null &
+                        update-rc.d -f tnl_ks remove &>/dev/null &
+                
+                elif [[ $binary == "tnl_ks" ]]; then
+                        vpn stop killswitch
+                        echo -e "${ORANGE}remove autostart for killswitch${NC}"
+                        update-rc.d -f $binary remove &>/dev/null &
+                fi    
+                
         else
                 echo -e "${ORANGE}usage: vpn disable wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
 
 ### remove ###
-
 vpn_remove() {
         if  [ -n "$binary" ]; then
-                echo -e "${ORANGE}remove autostart for $binary${NC}"
-                killswitch_check=(pgrep killswitch)
-                if  [ -n  "$killswitch_check" ]; then
-                update-rc.d -f tnl_ks remove &>/dev/null &
-                /etc/init.d/tnl_ks stop
-                rm /etc/init.d/tnl_ks &>/dev/null &
-                rm /bin/killswitch &>/dev/null &
-                fi
-                /etc/init.d/$binary stop &>/dev/null &
-                update-rc.d -f $binary remove &>/dev/null &
-                echo -e "${ORANGE}restore default route${NC}" >&2
-                route_default=$(grep default /etc/$binary/route_default | grep default)
-                ip route add $route_default &>/dev/null &
-                if   [[ $binary == "wireguard" ]]; then
-                rm /etc/$binary/*
-                echo -e "${ORANGE}remove WireGuard${NC}" >&2
-                opkg remove wireguard-tools &>/dev/null &
-                elif [[ $binary == "openvpn" ]]; then
-                rm /etc/$binary/*
-                echo -e "${ORANGE}remove OpenVPN${NC}" >&2
-                opkg remove openvpn &>/dev/null &
-                fi
-                rm /bin/vpn
+                if  [[ $binary == "openvpn" ]]; then
+                        vpn disable openvpn
+                        echo -e "${ORANGE}cleaning files ${NC}"
+                        rm /bin/killswitch &>/dev/null &
+                        rm /etc/init.d/tnl_ks &>/dev/null &
+                        rm /etc/$binary/*
+                        echo -e "${ORANGE}remove OpenVPN installation${NC}" >&2
+                        opkg remove openvpn &>/dev/null &
+                        rm /bin/vpn
+                        echo -e "${GREEN}done${NC}" >&2
+                        
+                 elif [[ $binary == "wireguard" ]]; then       
+                        vpn disable wireguard
+                        echo -e "${ORANGE}cleaning files ${NC}"
+                        rm /bin/killswitch &>/dev/null &
+                        rm /etc/init.d/tnl_ks &>/dev/null &
+                        rm /etc/init.d/wireguard &>/dev/null &
+                        rm /etc/$binary/*
+                        echo -e "${ORANGE}remove WireGuard installation${NC}" >&2
+                        opkg remove wireguard-tools &>/dev/null &
+                        rm /bin/vpn
+                        echo -e "${GREEN}done${NC}" >&2
+                        
+                 elif [[ $binary == "tnl_ks" ]]; then
+                        vpn disable killswitch
+                        rm /bin/killswitch &>/dev/null &
+                        rm /etc/init.d/tnl_ks &>/dev/null &
+                 fi
+                
         else
                 echo -e "${ORANGE}usage: vpn remove wireguard|openvpn|killswitch${NC}" >&2
         fi
