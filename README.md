@@ -27,7 +27,7 @@ OpenVPN installation possible!
 ##### Menu #####
 
 1) WireGuard install                // opkg based systems 
-2) OpenVPN install                       // opkg based systems
+2) OpenVPN install                  // opkg based systems
 
 0) Exit
 
