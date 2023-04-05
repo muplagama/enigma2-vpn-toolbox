@@ -344,6 +344,7 @@ case "$1" in
     echo "vpn stop wireguard|openvpn|killswitch">&2
     echo "vpn enable wireguard|openvpn|killswitch">&2
     echo "vpn disable wireguard|openvpn|killswitch">&2
+    echo "vpn remove wireguard|openvpn|killswitch">&2
     echo "vpn status" >&2
     exit 1
    ;;
