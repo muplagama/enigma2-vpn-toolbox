@@ -106,7 +106,7 @@ chmod 644 /etc/wireguard/wg0.conf
 wg_trim_conf() {
 sed -i '/.*DNS.*/PreUP = /etc/wireguard/pre_up.sh' /etc/wireguard/wg0.conf
 sed -i 's/,.*//' /etc/wireguard/wg0.conf
-sed -i 's/\/0/\/1,128.0.0.0/1/g' /etc/wireguard/wg0.conf
+sed -i 's/\/0/\/1,128.0.0.0\/1/g' /etc/wireguard/wg0.conf
 }
 
 cat > /etc/wireguard/pre_up.sh <<EOF
