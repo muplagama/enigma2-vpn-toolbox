@@ -98,27 +98,84 @@ vpn_stop() {
 ### enable ###
 
 vpn_enable() {
-        if  [ -n "$binary" ]; then
-                echo -e "${ORANGE}enable autostart for $binary${NC}"
-                update-rc.d $binary defaults &>/dev/null &
-                echo -e "${ORANGE}starting $binary${NC}"
-                /etc/init.d/$binary start &>/dev/null &
-                echo ""               
-                read  -p "enable killswitch?    y/n : " bqdl </dev/tty
-                        case $bqdl in
-                        [Yy]*)
+         if  [ -n "$binary" ]; then
+                if  [[ $binary == "openvpn" ]]; then
+                        ks_active=$(pgrep killswitch)
+                                if  [ -n "$ks_active" ]; then
+                                        vpn stop killswitch
+                                fi
+                        echo -e "${ORANGE}enable autostart for $binary${NC}"
+                        update-rc.d $binary defaults &>/dev/null &
+                        echo -e "${ORANGE}starting $binary${NC}"
+                        pkill openvpn
+                        sleep 2
+                        /etc/init.d/networking restart &>/dev/null &
+                        sleep 2
+                        /etc/init.d/$binary start &>/dev/null &
+                                echo ""
+                                read  -p "enable killswitch autostart?    y/n : " bqdl </dev/tty
+                                                case $bqdl in
+                                                [Yy]*)
+                                                echo -e "${ORANGE}enable autostart for killswitch${NC}"
+                                                update-rc.d tnl_ks defaults &>/dev/null &
+                                                kill_check=$(pgrep killswitch)
+                                                        if  [ -z "$kill_check" ]; then
+                                                                echo -e "${ORANGE}starting killswitch${NC}"
+                                                                /etc/init.d/tnl_ks start &>/dev/null &
+                                                        else
+                                                                echo -e "${RED}killswitch already running${NC}"
+                                                        fi
+                                                ;;
+                                                *)
+                                                exit 0
+                                                ;;
+                                        esac
+                        elif [[ $binary == "wireguard" ]]; then
+                        ks_active=$(pgrep killswitch)
+                                if  [ -n "$ks_active" ]; then
+                                        vpn stop killswitch
+                                fi
+                        echo -e "${ORANGE}enable autostart for $binary${NC}"
+                        update-rc.d $binary defaults &>/dev/null &
+                        echo -e "${ORANGE}starting $binary${NC}"
+                        /etc/init.d/$binary stop &>/dev/null &
+                        sleep2
+                        /etc/init.d/$binary start &>/dev/null &
+                                echo ""
+                                read  -p "enable killswitch autostart?    y/n : " bqdl </dev/tty
+                                                case $bqdl in
+                                                [Yy]*)
+                                                echo -e "${ORANGE}enable autostart for killswitch${NC}"
+                                                update-rc.d tnl_ks defaults &>/dev/null &
+                                                kill_check=$(pgrep killswitch)
+                                                        if  [ -z "$kill_check" ]; then
+                                                                echo -e "${ORANGE}starting killswitch${NC}"
+                                                                /etc/init.d/tnl_ks start &>/dev/null &
+                                                        else
+                                                                echo -e "${RED}killswitch already running${NC}"
+                                                        fi
+                                                ;;
+                                                *)
+                                                exit 0
+                                                ;;
+                                        esac
+                                        
+                         elif [[ $binary == "tnl_ks" ]]; then
+                        ks_active=$(pgrep killswitch)
+                                if  [ -n "$ks_active" ]; then
+                                        vpn stop killswitch
+                                fi
                         echo -e "${ORANGE}enable autostart for killswitch${NC}"
-                        update-rc.d tnl_ks defaults &>/dev/null &
+                        update-rc.d $binary defaults &>/dev/null &
                         echo -e "${ORANGE}starting killswitch${NC}"
-                        /etc/init.d/tnl_ks start &>/dev/null &
-                        ;;
-                        *)
-                        exit 0
-                        ;;
-                        esac
+                        /etc/init.d/$binary start &>/dev/null &
+
+                fi
         else
                 echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
-        fi
+        fi               
+                         
+                        
 }
 
 ### disable ###
