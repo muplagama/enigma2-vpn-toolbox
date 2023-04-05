@@ -35,7 +35,18 @@ OpenVPN installation possible!
 
 choose an Option: 
 ```
+```
+### Control
+to control use the "vpn" command
 
+vpn start wireguard|openvpn|killswitch          // to start a vpn connection (killswitch can be start oprional)
+vpn stop wireguard|openvpn|killswitch           // to stop a vpn connection     
+vpn enable wireguard|openvpn|killswitch         // to enable autostart
+vpn disable wireguard|openvpn|killswitch        // to stop vpn connection and disable autostart
+vpn remove wireguard|openvpn|killswitch         // to stop vpn connection and remove complete vpn installation
+vpn status                                      // to check vpn status now
+
+```
 
 ### Donate: ###
 BTC: 1JgfTbJtRUTHPo2W56KmjmLvsZkg7MvrVk
