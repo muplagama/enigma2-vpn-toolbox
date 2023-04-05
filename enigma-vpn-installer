@@ -123,6 +123,7 @@ wg_start() {
         update-rc.d wireguard defaults
 	sleep 1
         /etc/init.d/wireguard start
+	
 }
 wg_check_connect() {
 ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
@@ -273,10 +274,10 @@ case $main in
 	ovpn_proof_inst
 	ovpn_read_conf
 	ovpn_user_pass
-	ovpn_start
-	ovpn_check_connect
 	vpnstatus
 	ks_download
+	ovpn_start
+	ovpn_check_connect
 	mainmenu
         ;;
 3)
