@@ -24,21 +24,15 @@ chmod +x /tmp/enigma-vpn-installer
 +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+
 |E|n|i|g|m|a|2| |N|e|t|w|o|r|k| |T|o|o|l|b|o|x|
 +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+
-WireGuard installation already found!
+                                   by tnl.ninja
+                                               
+WireGuard installation possible!
 OpenVPN installation possible!
 
 ##### Menu #####
 
-1) WireGuard install
-2) WireGuard Killswitch
-3) uninstall WireGuard Killswitch
-
-4) OpenVPN install (coming soon)
-5) OpenVPN Killswitch (coming soon)
-
-0) Exit
-
-choose an Option: 
+1) WireGuard install                // opkg based systems 
+2) OpenVPN install                       // opkg based systems
 ```
 
 
