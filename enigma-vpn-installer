@@ -9,7 +9,7 @@ wg_menu_check() {
 menu_check_av_wg=$(opkg list wireguard-tools | grep wireguard-tools)
         if  [ -n "$menu_check_av_wg" ]
                 then
-                        echo -e "${GREEN}1) WireGuard install                // opkg based systems ${NC}"
+                        echo -e "${GREEN}1) WireGuard install                     // opkg based systems ${NC}"
                        
                 else
                         echo -e "${RED}1) WireGuard install (not possible)    // opkg based systems${NC}"
