@@ -95,7 +95,8 @@ proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
         fi
 }
 wg_read_conf() {
-echo "Pipe in wireguard config, or paste and it ctrl-d when done"
+clear
+echo -e "${ORANGE}Pipe in WireGuard config, or paste it (push <ENTER> and ctrl-d when done)${NC}"
 wgconf=$(cat)
 
 cat <<EOF > /etc/wireguard/wg0.conf
@@ -163,7 +164,7 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
 }
 ovpn_read_conf() {
 clear
-echo -e "${ORANGE}Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
+echo -e "${ORANGE}Pipe in OpenVPN config, or paste it (push <ENTER> and ctrl-d when done)${NC}"
 ovpnconf=$(cat)
 
 cat <<EOF > /etc/openvpn/openvpn.conf
