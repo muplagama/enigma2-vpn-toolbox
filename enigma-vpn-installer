@@ -294,6 +294,7 @@ case $main in
 	;;
 0)
         echo "bye bye"
+	rm /tmp/enigma-vpn-installer
         exit 0
         ;;
 *)
