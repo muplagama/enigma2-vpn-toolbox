@@ -59,9 +59,9 @@ echo "//check_vpn $check_vpn"
                 dns_v4=$(nslookup -query=A "$url_grep" "$dns_ip" | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -n 1)
                 echo "//dns_v4"
                 fi
-### remove backup ###
+### remove backup ### 
                 if [[ $iface == "wg"* ]]; then
-                rem_backup_v4=$(ip route show | grep "$dns_v4" )
+   #             rem_backup_v4=$(ip route show | grep "$dns_v4" )
                 if  [ -n "$rem_backup_v4" ]; then
                 echo "//rem_backup"
                 fi
