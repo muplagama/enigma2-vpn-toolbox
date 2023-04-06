@@ -269,7 +269,6 @@ vpn_remove() {
 
 
 ### status ###
-
 interface_check() {
         clear
         echo ""
@@ -314,6 +313,67 @@ ks_check(){
                 echo -e "${RED} Killswitch not running. Type "vpn enable killswitch" to enable${NC}"
         fi
 }
+###new conf
+new_conf(){
+        if  [[ $binary == "openvpn" ]]; then
+                echo -e "${ORANGE}stop $binary${NC}" >&2
+                vpn stop $binary &>/dev/null &
+                sleep 2
+                echo -e "${ORANGE}remove config files${NC}" >&2
+                rm /etc/$binary/*.conf
+                rm /etc/$binary/auth_pass
+clear
+echo -e "${ORANGE}Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
+ovpnconf=$(cat)
+
+cat <<EOF > /etc/openvpn/openvpn.conf
+${ovpnconf}
+EOF
+                sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
+                sed -i '/script-security/d' /etc/openvpn/openvpn.conf
+                sed -i '/update-resolv-conf/d' /etc/openvpn/openvpn.conf
+                sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
+                sed -i '1a\log /tmp/openvpn.log' /etc/openvpn/openvpn.conf
+                sed -i '1a\pull-filter ignore "route-ipv6"' /etc/openvpn/openvpn.conf
+                sed -i '1a\pull-filter ignore "ifconfig-ipv6"' /etc/openvpn/openvpn.conf
+                chmod 644 /etc/openvpn/openvpn.conf
+               
+clear
+echo -e "${ORANGE}creating OpenVPN Login File${NC}"
+echo ""
+read -e -i "$openvpnuser" -p "Username: " openvpnuser </dev/tty
+read -e -i "$openvpnpass" -p "Password: " openvpnpass </dev/tty
+
+cat <<EOF > /etc/openvpn/auth_pass
+${openvpnuser}
+${openvpnpass}
+EOF
+                chmod 644 /etc/openvpn/auth_pass
+                vpn start $binary  
+
+        elif [[ $binary == "wireguard" ]]; then
+                echo -e "${ORANGE}stop $binary${NC}" >&2
+                vpn stop $binary &>/dev/null &
+                sleep 2                                                                       
+                echo -e "${ORANGE}remove config files${NC}" >&2
+                rm /etc/$binary/*.conf &>/dev/null &
+
+clear
+echo -e "${ORANGE}Pipe in WireGuard config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
+wgconf=$(cat)
+cat <<EOF > /etc/wireguard/wg0.conf
+${wgconf}
+EOF
+                sed -i '/DNS/d' /etc/wireguard/wg0.conf
+                sed -i '/AllowedIPs/d' /etc/wireguard/wg0.conf
+                sed -i '/^PrivateKey.*/a PreUP = \/etc\/wireguard\/pre_up.sh' /etc/wireguard/wg0.conf
+                sed -i '/^Endpoint.*/a AllowedIPs = 0.0.0.0\/1\,128.0.0.0\/1' /etc/wireguard/wg0.conf
+                chmod 644 /etc/wireguard/wg0.conf
+                vpn start $binary
+        else
+                echo -e "${ORANGE}usage: vpn newconf wireguard|openvpn${NC}" >&2
+        fi
+}
 
 
 case "$1" in
@@ -332,6 +392,9 @@ case "$1" in
         remove)
         vpn_remove
         ;;
+        newconf)
+        new_conf
+        ;;
         status)
         interface_check
         link_check
@@ -345,6 +408,7 @@ case "$1" in
     echo "vpn enable wireguard|openvpn|killswitch">&2
     echo "vpn disable wireguard|openvpn|killswitch">&2
     echo "vpn remove wireguard|openvpn|killswitch">&2
+    echo "vpn newconf wireguard|openvpn">&2
     echo "vpn status" >&2
     exit 1
    ;;
