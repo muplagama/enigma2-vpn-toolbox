@@ -317,7 +317,7 @@ ks_check(){
 new_conf(){
         if  [[ $binary == "openvpn" ]]; then
                 echo -e "${ORANGE}stop $binary${NC}" >&2
-                vpn stop $binary &>/dev/null &
+                vpn stop $binary
                 sleep 2
                 echo -e "${ORANGE}remove config files${NC}" >&2
                 rm /etc/$binary/*.conf
@@ -353,10 +353,10 @@ EOF
 
         elif [[ $binary == "wireguard" ]]; then
                 echo -e "${ORANGE}stop $binary${NC}" >&2
-                vpn stop $binary &>/dev/null &
+                vpn stop $binary
                 sleep 2                                                                       
                 echo -e "${ORANGE}remove config files${NC}" >&2
-                rm /etc/$binary/*.conf &>/dev/null &
+                rm /etc/$binary/*.conf
 
 clear
 echo -e "${ORANGE}Pipe in WireGuard config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
