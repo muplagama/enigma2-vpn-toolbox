@@ -28,12 +28,15 @@ OpenVPN installation possible!
 
 ##### Menu #####
 
-1) WireGuard install                // opkg based systems 
-2) OpenVPN install                  // opkg based systems
+1) WireGuard install                     // opkg based systems 
+2) OpenVPN install                       // opkg based systems
 
 0) Exit
 
+Info: killswitch disabled by default, can be enabled in post installation
+
 choose an Option: 
+
 ```
 ### post installation
 
