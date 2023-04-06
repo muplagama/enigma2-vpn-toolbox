@@ -64,7 +64,7 @@ vpn_stop() {
                                 /etc/init.d/$binary stop &>/dev/null &
                                 wait $!
                                 echo -e "${ORANGE}restarting network${NC}"
-                                /etc/init.d/networking restart &>/dev/null &
+                                /etc/init.d/networking stop; /etc/init.d/networking start
                                 wait $!
 
                                 elif [[ $binary == "wireguard" ]]; then
@@ -79,7 +79,7 @@ vpn_stop() {
                                 /etc/init.d/$binary stop &>/dev/null &
                                 wait $!
                                 echo -e "${ORANGE}restarting network${NC}"
-                                /etc/init.d/networking restart &>/dev/null &
+                                /etc/init.d/networking stop; /etc/init.d/networking start
                                 wait $!
 
                                 elif [[ $binary == "tnl_ks" ]]; then
