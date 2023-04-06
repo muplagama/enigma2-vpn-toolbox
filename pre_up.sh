@@ -2,15 +2,16 @@
 
 _endpoint=$(cat /etc/wireguard/wg0.conf | grep End | awk -F '=' '{print $2}' | awk -F':' '{print $1}'| sed -e 's/ //g')
 _mydefaultgw=$(/sbin/ip route | awk '/default/ { print $3 }')
+ip route add 9.9.9.9 via "$_mydefaultgw"
 
 if [[ $_endpoint =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     _ip=$_endpoint
 else
-  _ip=$(nslookup $_endpoint 1.1.1.1 | awk -F': ' 'NR==6 { print $2 }')
+  _ip=$(nslookup -query=A "$_endpoint" 9.9.9.9 | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -n 1)
   echo "hostname  resolved to: $_ip"
 fi
+ip route del 9.9.9.9
 
-ip r add ${_ip}/32 via $_mydefaultgw
+ip route add ${_ip} via $_mydefaultgw
 
 exit 0
-EOF
