@@ -45,7 +45,9 @@ vpn stop wireguard|openvpn|killswitch           // to stop a vpn connection
 vpn enable wireguard|openvpn|killswitch         // to enable autostart
 vpn disable wireguard|openvpn|killswitch        // to stop vpn connection and disable autostart
 vpn remove wireguard|openvpn|killswitch         // to stop vpn connection and remove complete vpn installation
+vpn newconf wireguard|openvpn                   // to replace or renew vpn config files
 vpn status                                      // to check vpn status now
+
 
 ```
 
