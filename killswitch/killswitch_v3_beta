@@ -16,9 +16,9 @@ route_default=$(ip route | awk '/default/')
 check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
         if  [ -z "$check_vpn" ]; then
                 if [ -e /etc/wireguard/*conf ]; then
-                        binary="wireguard"*
+                        binary="wireguard"
                 elif [ -e /etc/openvpn/*.conf ]; then
-                        binary="openvpn"*
+                        binary="openvpn"
                 fi
                 vpn start $binary
         fi
