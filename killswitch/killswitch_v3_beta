@@ -24,7 +24,7 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 echo "vpn restart"
                 vpn start $binary
         fi
-ping_check=$(ping -c 2 -I $data_check "$dns_check_ping" | grep time)
+ping_check=$(ping -c 2 -I 1.1.1.1 "$local_dns" | grep time)
         if  [ -z "$ping_check" ]; then
                 if [ -e /etc/wireguard/*.conf ]; then
                         binary="wireguard"
