@@ -1,0 +1,26 @@
+
+#!/bin/bash
+clear
+### presets
+
+local_dns=$(cat /etc/resolv.conf | grep nameserver | awk '/nameserver/ {print $ >
+
+### function
+
+while true :; do
+
+route_default=$(ip route | awk '/default/')
+        if  [ -n "$route_default" ]; then
+                ip route del default
+        fi
+check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+        if  [ -z "$check_vpn" ]; then
+                if [ -e /etc/wireguard/*conf ]; then
+                        binary="wireguard"*
+                elif [ -e /etc/openvpn/*.conf ]; then
+                        binary="openvpn"*
+                fi
+                vpn start $binary
+        fi
+
+done
