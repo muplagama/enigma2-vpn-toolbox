@@ -3,7 +3,7 @@
 clear
 ### presets
 
-local_dns=$(cat /etc/resolv.conf | grep nameserver | awk '/nameserver/ {print $ >
+local_dns=$(cat /etc/resolv.conf | grep nameserver | awk '/nameserver/ {print $2}' | head -n 1)
 
 
 ### function
