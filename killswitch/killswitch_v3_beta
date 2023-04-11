@@ -5,41 +5,42 @@ clear
 
 local_dns=$(cat /etc/resolv.conf | grep nameserver | awk '/nameserver/ {print $2}' | head -n 1)
 
+###define proto
+if [ -e /etc/wireguard/*.conf ]; then
+        binary="wireguard"
+elif [ -e /etc/openvpn/*.conf ]; then
+        binary="openvpn"
+fi
 
 ### function
 
 while true :; do
-
 route_default=$(ip route | awk '/default/')
         if  [ -n "$route_default" ]; then
-                ip route del default
-        else
-                echo "route_default already delete"
-        fi
-check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
-        if  [ -z "$check_vpn" ]; then
-                if [ -e /etc/wireguard/*.conf ]; then
-                        binary="wireguard"
-                        vpn start $binary
-                        wait $!
-                elif [ -e /etc/openvpn/*.conf ]; then
-                        binary="openvpn"
-                        vpn start $binary
-                        wait $!
+                if [[ $binary == "wireguard" ]]; then
+                        ip route del default
                 fi
         fi
-#grep_local_dns=(ip route | grep $local_dns)
-#       if  [ -n "$grep_local_dns" ]; then
-#               ip route del "$local_dns"
-#       fi
-#
-#ping_check=$(ping -c 2 -I $check_vpn pool.ntp.org | grep time)
-#        if  [ -z "$ping_check" ]; then
-#                if [ -e /etc/wireguard/*.conf ]; then
-#                        binary="wireguard"
-#                elif [ -e /etc/openvpn/*.conf ]; then
-#                        binary="openvpn"
-#                fi
-#                vpn stop $binary && vpn start $binary
-#        fi
+
+
+check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+        if  [ -n "$check_vpn" ]; then
+                if [[ $binary == "wireguard" ]]; then
+                        ping_check=$(ping -c 2 -I $check_vpn pool.ntp.org | grep time)
+                                if  [ -z "$ping_check" ]; then
+#                                       vpn stop $binary && vpn start binary
+/etc/init.d/wireguard stop
+/etc/init.d/wireguard start
+                                fi
+                fi
+        else
+                if [[ $binary == "wireguard" ]]; then
+                        vpn start $binary
+                fi
+        fi
+
+
+
+
+
 done
