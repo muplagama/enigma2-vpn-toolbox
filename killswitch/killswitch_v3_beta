@@ -1,5 +1,5 @@
 
-#!/bin/bash
+#!/bin/bash -x
 clear
 ### presets
 
@@ -13,28 +13,33 @@ while true :; do
 route_default=$(ip route | awk '/default/')
         if  [ -n "$route_default" ]; then
                 ip route del default
+        else
+                echo "route_default already delete"
         fi
 check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
         if  [ -z "$check_vpn" ]; then
                 if [ -e /etc/wireguard/*.conf ]; then
                         binary="wireguard"
+                        vpn start $binary
+                        wait $!
                 elif [ -e /etc/openvpn/*.conf ]; then
                         binary="openvpn"
+                        vpn start $binary
+                        wait $!
                 fi
-                echo "vpn restart"
-                vpn start $binary
         fi
-ping_check=$(ping -c 2 -I 1.1.1.1 "$local_dns" | grep time)
-        if  [ -z "$ping_check" ]; then
-                if [ -e /etc/wireguard/*.conf ]; then
-                        binary="wireguard"
-                elif [ -e /etc/openvpn/*.conf ]; then
-                        binary="openvpn"
-                fi
-                vpn stop $binary
-                vpn start $binary
-        fi
-
-
-
+#grep_local_dns=(ip route | grep $local_dns)
+#       if  [ -n "$grep_local_dns" ]; then
+#               ip route del "$local_dns"
+#       fi
+#
+#ping_check=$(ping -c 2 -I $check_vpn pool.ntp.org | grep time)
+#        if  [ -z "$ping_check" ]; then
+#                if [ -e /etc/wireguard/*.conf ]; then
+#                        binary="wireguard"
+#                elif [ -e /etc/openvpn/*.conf ]; then
+#                        binary="openvpn"
+#                fi
+#                vpn stop $binary && vpn start $binary
+#        fi
 done
