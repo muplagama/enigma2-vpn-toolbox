@@ -74,12 +74,23 @@ wrong_opt() {
 }
 sys_update() {
         opkg update > /dev/null 2>&1
+	wait $!
 }
+ks_download() {
+	        echo -e "${GREEN}...download files${NC}"
+		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
+	wait $!
+		chmod +x /bin/killswitch
+		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
+	wait $!
+		chmod +x /etc/init.d/tnl_ks
+		}
 
 vpnstatus(){
-	wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn_dev
-#	wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
-	chmod +x /bin/vpn
+		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn_dev
+	
+#		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
+		chmod +x /bin/vpn
 }
 
 ### WireGuard ###
@@ -95,60 +106,7 @@ proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
                         exit 0
         fi
 }
-wg_read_conf() {
-clear
-echo -e "${ORANGE}Pipe in WireGuard config, or paste it (push <ENTER> and ctrl-d when done)${NC}"
-wgconf=$(cat)
 
-cat <<EOF > /etc/wireguard/wg0.conf
-${wgconf}
-EOF
-chmod 644 /etc/wireguard/wg0.conf
-}
-wg_trim_conf() {
-sed -i '/DNS/d' /etc/wireguard/wg0.conf
-sed -i '/AllowedIPs/d' /etc/wireguard/wg0.conf
-sed -i '/^PrivateKey.*/a PreUP = \/etc\/wireguard\/pre_up.sh' /etc/wireguard/wg0.conf
-sed -i '/^Endpoint.*/a AllowedIPs = 0.0.0.0\/1\,128.0.0.0\/1' /etc/wireguard/wg0.conf
-}
-
-
-wg_start() {
-  wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh
-  chmod +x /etc/wireguard/pre_up.sh
-        echo -e "${GREEN}...install update-rc.d${NC}"
-        opkg install update-rc.d > /dev/null 2>&1
-        echo -e "${GREEN}...create startscript${NC}"
-        wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard > /dev/null 2>&1
-        echo -e "${GREEN}...enable startscript${NC}"
-	chmod +x /etc/init.d/wireguard
-        update-rc.d wireguard defaults
-	sleep 1
-        /etc/init.d/wireguard start
-	
-}
-wg_check_connect() {
-ping_check=$(ping -c 2 -I wg0 "1.1.1.1" | grep time)
-        if  [ -n "$ping_check" ]
-                then
-                        echo -e "${GREEN}WireGuard is up${NC}"
-			sleep 10
-                else
-                        echo -e "${RED}Error! WireGuard is down${NC}"
-			sleep 10
-        fi
-}
-
-ks_download() {
-	        echo -e "${GREEN}...download files${NC}"
-		sleep 1
-    update-rc.d killswitch disable > /dev/null 2>&1
-    rm -rf /etc/init.d/killswitch > /dev/null 2>&1
-		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
-		chmod +x /bin/killswitch
-		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
-		chmod +x /etc/init.d/tnl_ks
-		}
 
 ##### OpenVPN
 ovpn_proof_inst() {
@@ -158,69 +116,12 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
                 then
                         echo -e "${GREEN}...install Openvpn${NC}"
                         opkg install openvpn
+			opkg -f openvpn remove > /dev/null 2>&1
                 else
                         echo -e "${RED}Sorry! Openvpn installation impossible!${NC}"
                         exit 0
         fi
 }
-ovpn_read_conf() {
-clear
-echo -e "${ORANGE}Pipe in OpenVPN config, or paste it (push <ENTER> and ctrl-d when done)${NC}"
-ovpnconf=$(cat)
-
-cat <<EOF > /etc/openvpn/openvpn.conf
-${ovpnconf}
-EOF
-sed -i '/auth-user-pass/d' /etc/openvpn/openvpn.conf
-sed -i '/script-security/d' /etc/openvpn/openvpn.conf
-sed -i '/update-resolv-conf/d' /etc/openvpn/openvpn.conf
-sed -i '1a\auth-user-pass /etc/openvpn/auth_pass' /etc/openvpn/openvpn.conf
-sed -i '1a\log /tmp/openvpn.log' /etc/openvpn/openvpn.conf
-sed -i '1a\pull-filter ignore "route-ipv6"' /etc/openvpn/openvpn.conf
-sed -i '1a\pull-filter ignore "ifconfig-ipv6"' /etc/openvpn/openvpn.conf
-
-chmod 644 /etc/openvpn/openvpn.conf
-}
-ovpn_user_pass() {
-clear
-echo -e "${ORANGE}creating OpenVPN Login File${NC}"
-echo ""
-read -e -i "$openvpnuser" -p "Username: " openvpnuser </dev/tty
-read -e -i "$openvpnpass" -p "Password: " openvpnpass </dev/tty
-
-cat <<EOF > /etc/openvpn/auth_pass
-${openvpnuser}
-${openvpnpass}
-EOF
-
-chmod 644 /etc/openvpn/auth_pass
-}
-
-ovpn_start() {
-        echo -e "${GREEN}...install update-rc.d${NC}"
-        opkg install update-rc.d &>/dev/null &
-        echo -e "${GREEN}...enable startscript${NC}"
-	update-rc.d openvpn defaults &>/dev/null &
-	sleep 1
-        /etc/init.d/openvpn start
-}
-
-ovpn_check_connect() {
-sleep 5
-ping_check=$(ping -c 2 -I tun0 "1.1.1.1" | grep time)
-        if  [ -n "$ping_check" ]
-                then
-                        echo -e "${GREEN}OpenVPN is up${NC}"
-			sleep 10
-                else
-                        echo -e "${RED}Error! OpenVPN is down${NC}"
-			sleep 10
-        fi
-}
-
-
-
-
 
 
 ##### Dreambox VPN Manager
