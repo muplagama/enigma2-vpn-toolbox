@@ -80,13 +80,62 @@ chattr +i /etc/resolv.conf
 
 echo -e "${ORANGE}dns set: nameserver $dns1 nameserver $dns2${NC}"
 }
+### status ###
+interface_check() {
+        clear
+        echo ""
+        echo -e "${ORANGE}VPN status check${NC}"
+        echo ""
+        echo -e "${ORANGE}Interface status check${NC}"
 
+        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep wg; ip -o link show | awk -F': ' '{print $2}' | grep tun)
+        if  [ -n "$iface" ]; then
+                echo -e "${GREEN} $iface VPN Interface is up${NC}"
+        else
+                echo -e "${RED} $iface VPN Interface is down${NC}"
+        exit 0
+        fi
+}
+link_check(){
+        echo -e "${ORANGE}$iface link check${NC}"
+        link=$( ping -c 3 -I $iface 1.0.0.1 | grep time | grep ttl | wc -l )
+        if [ $link -eq 0 ]; then
+                echo -e "${RED} $iface VPN link check failed${NC}"
+                exit 0
+        else
+                echo -e "${GREEN} $iface VPN link check success${NC}"
+        fi
+}
+
+location_check(){
+        echo -e "${ORANGE}$iface VPN location check${NC}"
+        vpn_ip=$(curl -s ipinfo.io/ip)
+        echo -e "${GREEN} VPN IP:       "$vpn_ip"${NC}"
+        vpn_country=$(curl -s ipinfo.io/country)
+        echo -e "${GREEN} VPN Country:  "$vpn_country"${NC}"
+        vpn_city=$(curl -s ipinfo.io/city)
+        echo -e "${GREEN} VPN City:     "$vpn_city"${NC}"
+}
+ks_check(){ 
+        echo -e "${ORANGE}$iface VPN killswitch check${NC}"
+        check_ks=$(pgrep killswitch)
+        if  [ -n  "$check_ks" ]; then
+                echo -e "${GREEN} Killswitch is running.${NC}"
+        else
+                echo -e "${RED} Killswitch not running. Type "vpn enable killswitch" to enable${NC}"
+        fi
+}
 case "$1" in
-        start)
-        vpn_start
+        setdns)
+        select_dns1
+        select_dns2
+        push_dns
         ;;
-        silent)
-        start_silent
+        status)
+        interface_check
+        link_check
+        location_check
+        ks_check        
         ;;
         stop)
         vpn_stop
@@ -102,17 +151,6 @@ case "$1" in
         ;;
         newconf)
         new_conf
-        ;;
-        setdns)
-        select_dns1
-        select_dns2
-        push_dns
-        ;;
-        status)
-        interface_check
-        link_check
-        location_check
-        ks_check
         ;;
     *)
     echo "usage:"
