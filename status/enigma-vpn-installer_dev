@@ -268,36 +268,37 @@ echo -e ""
 read -p "choose an Option: " main </dev/tty
 
 case $main in
-  1)
-    sys_update
-    vpnstatus
-    wg_proof_inst
-    vpn newconf wireguard
-    vpn setdns
-  	mainmenu
-        ;;
+1)
+sys_update
+vpnstatus
+wg_proof_inst
+vpn newconf wireguard
+vpn setdns
+mainmenu
+;;
 2)
-	  sys_update
-	  vpnstatus
-	  vpn setdns
-	  mainmenu
-        ;;
+sys_update
+vpnstatus
+vpn newconf openvpn
+vpn setdns
+mainmenu
+;;
 3)
-    mainmenu
-        ;;
+mainmenu
+;;
 4)	
-	  dreambox_install
-	  mainmenu
-	      ;;
+dreambox_install
+mainmenu
+;;
 0)
-    echo "bye bye"
-	  rm /tmp/enigma-vpn-installer
-    exit 0
-        ;;
+echo "bye bye"
+rm /tmp/enigma-vpn-installer
+exit 0
+;;
 *)
-    wrong_opt
-    mainmenu
-        ;;
+wrong_opt
+mainmenu
+;;
 
 esac
 }
