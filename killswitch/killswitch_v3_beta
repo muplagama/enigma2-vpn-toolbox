@@ -28,9 +28,7 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                 if [[ $binary == "wireguard" ]]; then
                         ping_check=$(ping -c 2 -I $check_vpn pool.ntp.org | grep time)
                                 if  [ -z "$ping_check" ]; then
-#                                       vpn stop $binary && vpn start binary
-/etc/init.d/wireguard stop
-/etc/init.d/wireguard start
+                                        vpn silent $binary
                                 fi
                 fi
         else
