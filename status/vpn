@@ -55,17 +55,16 @@ start_silent() {
                         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                 if  [ -n "$iface" ]; then
                                         if  [[ $binary == "wireguard" ]]; then
-                                        /etc/init.d/$binary stop
-                                        /etc/init.d/$binary start
+                                        killswitch
                                         fi
                                 else
                                         if  [[ $binary == "wireguard" ]]; then
-                                        /etc/init.d/$binary start
+                                        killswitch
                                         fi
-
                                 fi
         fi
 }
+
 ### stop ###
 vpn_stop() {
         if  [ -n "$binary" ]; then
