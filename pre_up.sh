@@ -25,8 +25,12 @@ if  [ -n "$binary" ]; then
                                         _ip=$(nslookup -query=A "$_endpoint" $local_dns | grep Address | sed '/:53$/d' | sed s/^[^0-9]*// | head -n 1)
                                         echo "hostname  resolved to: $_ip"
                                 fi
+                        ip route del default
                         ip route del $local_dns
-                        ip route add ${_ip} via $_mydefaultgw
+                        route_set=$(ip route show | grep ${_ip})
+                                if [ -z "$route_set" ]; then
+                                ip route add ${_ip} via $_mydefaultgw
+                                fi
                 else
                         echo "no endpoint-config found"
                 fi
