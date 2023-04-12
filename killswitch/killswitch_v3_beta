@@ -26,14 +26,19 @@ route_default=$(ip route | awk '/default/')
 check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
         if  [ -n "$check_vpn" ]; then
                 if [[ $binary == "wireguard" ]]; then
-                        ping_check=$(ping -c 2 -I $check_vpn pool.ntp.org | grep time)
+                        ping_check=$(ping -c 2 -I $check_vpn 1.1.1.1 | grep time)
                                 if  [ -z "$ping_check" ]; then
+                                         _date=$(date +"%F %H:%M:%S")
+                                        echo -e "$_date wg0 offline" >>  /tmp/wireguard.log
                                         vpn silent $binary
                                 fi
                 fi
         else
                 if [[ $binary == "wireguard" ]]; then
+                        _date=$(date +"%F %H:%M:%S")
+                        echo -e "$_date wg0 offline" >>  /tmp/wireguard.log
                         vpn start $binary
+
                 fi
         fi
 
