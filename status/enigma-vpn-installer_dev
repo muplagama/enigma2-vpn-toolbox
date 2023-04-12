@@ -123,34 +123,6 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
         fi
 }
 
-
-##### Dreambox VPN Manager
-dreambox_install() {
-dm_grep=$(cat /etc/hostname)
-if [ $dm_grep = dreambox ]
-        then
-        echo "Installing Dreambox One Version"
-	cd /tmp
-	curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
-	apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
-	curl -o /tmp/WireGuardONE.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardONE.zip?raw=true
-	unzip WireGuardONE.zip
-	python /tmp/WireGuard/WireGuard.py
-elif [ $dm_grep = DMTwo ]
-        then
-        echo "Installing Dreambox Two Version"
-	cd /tmp
-	curl -o /tmp/enigma2-plugin-extensions-vpnmanager_1.2.0.deb -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/enigma2-plugin-extensions-vpnmanager_1.2.0.deb?raw=true
-	apt-get update && dpkg -i /tmp/*.deb && apt-get -f install
-	curl -o /tmp/WireGuardTWO.zip -JLO https://github.com/muplagama/enigma2-vpn-toolbox/blob/main/deb/WireGuardTWO.zip?raw=true
-	unzip WireGuardTWO.zip
-	python /tmp/WireGuard/WireGuard.py
-else
-        echo "not installable on this system"
-        exit 0
-fi
-}
-
 mainmenu() {
 my_header
 wg_av
@@ -188,7 +160,6 @@ mainmenu
 mainmenu
 ;;
 4)	
-dreambox_install
 mainmenu
 ;;
 0)
