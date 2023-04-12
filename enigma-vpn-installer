@@ -216,6 +216,76 @@ ping_check=$(ping -c 2 -I tun0 "1.1.1.1" | grep time)
 			sleep 10
         fi
 }
+##### DNS SETTINGS 
+select_dns1() {
+clear
+echo -e "${ORANGE}PRIMARY DNS${NC}"
+echo "1) cloudflare     1.1.1.1"
+echo "2) quad9          9.9.9.9"
+echo "3) google         8.8.8.8"
+echo "4) adguard        176.103.130.130"
+read  -p "select primary dns: " bqdl </dev/tty
+case $bqdl in
+[1]*)
+dns1=1.1.1.1
+;;
+[2]*)
+dns1=9.9.9.9
+;;
+[3]*)
+dns1=8.8.8.8
+;;
+[4]*)
+dns1=176.103.130.130
+;;
+*)
+echo "none selected"
+exit 0
+;;
+esac
+}
+select_dns2() {
+echo ""
+echo -e "${ORANGE}Secondary DNS${NC}"
+echo "1) cloudflare     1.0.0.1"
+echo "2) quad9          149.112.112.112"
+echo "3) google         8.8.4.4"
+echo "4) adguard        176.103.130.131"
+read  -p "select secondary dns: " bqdl </dev/tty
+case $bqdl in
+[1]*)
+dns2=1.0.0.1
+;;
+[2]*)
+dns2=149.112.112.112
+;;
+[3]*)
+dns2=8.8.4.4
+;;
+[4]*)
+dns2=176.103.130.131
+;;
+*)
+echo "none selected"
+exit 0
+;;
+esac
+}
+
+push_dns() {
+chattr -i /etc/resolv.conf
+rm /etc/resolv.conf
+cat <<EOF > /etc/resolv.conf
+nameserver $dns1
+nameserver $dns2
+EOF
+
+chattr +i /etc/resolv.conf
+}
+
+
+
+
 
 ##### Dreambox VPN Manager
 dreambox_install() {
@@ -269,6 +339,9 @@ case $main in
         wg_trim_conf
         vpnstatus
 	ks_download
+	select_dns1
+	select_dns2
+	push_dns
 	wg_start
 	sleep 2
         wg_check_connect
@@ -280,6 +353,9 @@ case $main in
 	ovpn_user_pass
 	vpnstatus
 	ks_download
+	select_dns1
+	select_dns2
+	push_dns
 	ovpn_start
 	sleep 4
 	ovpn_check_connect
