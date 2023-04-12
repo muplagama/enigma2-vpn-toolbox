@@ -78,7 +78,7 @@ EOF
 
 chattr +i /etc/resolv.conf
 
-echo -e "${ORANGE}dns set: nameserver $dns1 nameserve $dns2${NC}"
+echo -e "${ORANGE}dns set: nameserver $dns1 nameserver $dns2${NC}"
 }
 
 case "$1" in
