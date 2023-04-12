@@ -101,7 +101,10 @@ proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
                 then
                         echo -e "${GREEN}...install WireGuard${NC}"
                         opkg install wireguard-tools
-                else
+			echo -e "${GREEN}...create startscript${NC}"
+        		wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard > /dev/null 2>&1
+ 		wait $!		
+ 		else
                         echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
                         exit 0
         fi
@@ -117,6 +120,7 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
                         echo -e "${GREEN}...install Openvpn${NC}"
                         opkg install openvpn
 			opkg -f openvpn remove > /dev/null 2>&1
+		wait $!
                 else
                         echo -e "${RED}Sorry! Openvpn installation impossible!${NC}"
                         exit 0
