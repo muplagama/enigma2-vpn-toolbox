@@ -49,7 +49,23 @@ vpn_start() {
                 echo -e "${ORANGE}usage: vpn start wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
+### start silent ###
+start_silent() {
+         if  [ -n "$binary" ]; then
+                        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                                if  [ -n "$iface" ]; then
+                                        if  [[ $binary == "wireguard" ]]; then
+                                        /etc/init.d/$binary stop
+                                        /etc/init.d/$binary start
+                                        fi
+                                else
+                                        if  [[ $binary == "wireguard" ]]; then
+                                        /etc/init.d/$binary start
+                                        fi
 
+                                fi
+        fi
+}
 ### stop ###
 vpn_stop() {
         if  [ -n "$binary" ]; then
@@ -420,6 +436,9 @@ EOF
 case "$1" in
         start)
         vpn_start
+        ;;
+        silent)
+        start_silent
         ;;
         stop)
         vpn_stop
