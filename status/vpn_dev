@@ -123,6 +123,17 @@ ks_check(){
                 echo -e "${RED} Killswitch not running. Type "vpn enable killswitch" to enable${NC}"
         fi
 }
+### clear routing ###
+clear_routing(){
+while : ; do
+    clear_routing=$(ip route list | grep -v '/24' | head -n1)
+        if  [ -n "$clear_routing" ]; then
+                ip route del $clear_routing
+        else
+                exit 0
+        fi
+done
+}
 ### new conf ###
 new_conf(){
         if  [[ $binary == "openvpn" ]]; then
