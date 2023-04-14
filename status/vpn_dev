@@ -211,6 +211,9 @@ vpn_start() {
                         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                 if  [ -z "$iface" ]; then
                                         if  [[ $binary == "wireguard" ]]; then
+                                                if  [ ! -e /etc/$binary/route_default ]; then
+                                                ip route show default | grep default > /etc/$binary/route_default
+                                                fi
                                                 /etc/init.d/$binary start
                                                         kill_check=$(pgrep killswitch)
                                                         if  [ -z "$kill_check" ]; then
