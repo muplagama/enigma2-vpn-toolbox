@@ -103,6 +103,10 @@ proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
                         opkg install wireguard-tools
 			echo -e "${GREEN}...create startscript${NC}"
         		wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard > /dev/null 2>&1
+			chmod +x /etc/init.d/wireguard
+			echo -e "${GREEN}...download pre_up${NC}"
+			wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh /dev/null 2>&1
+			chmod 644 /etc/wireguard/pre_up.sh
  		wait $!		
  		else
                         echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
