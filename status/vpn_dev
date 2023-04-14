@@ -130,7 +130,7 @@ while : ; do
         if  [ -n "$clear_routing" ]; then
                 ip route del $clear_routing
         else
-                exit 0
+                break
         fi
 done
 }
