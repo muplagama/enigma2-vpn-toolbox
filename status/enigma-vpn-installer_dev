@@ -107,6 +107,9 @@ proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
 			echo -e "${GREEN}...download pre_up${NC}"
 			wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh /dev/null 2>&1
 			chmod +x /etc/wireguard/pre_up.sh
+			if  [ ! -e /etc/wireguard/route_default ]; then
+        		ip route show default | grep default > /etc/$binary/route_default
+			fi
  		wait $!		
  		else
                         echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
