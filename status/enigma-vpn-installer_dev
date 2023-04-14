@@ -154,6 +154,7 @@ case $main in
 sys_update
 vpnstatus
 wg_proof_inst
+ks_download
 vpn newconf wireguard
 vpn setdns
 mainmenu
@@ -161,6 +162,7 @@ mainmenu
 2)
 sys_update
 vpnstatus
+ks_download
 vpn newconf openvpn
 vpn setdns
 mainmenu
