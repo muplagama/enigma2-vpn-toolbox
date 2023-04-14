@@ -261,10 +261,6 @@ vpn_stop() {
                                         echo -e "${ORANGE}stopping $binary${NC}"
                                         /etc/init.d/$binary stop &>/dev/null &
                                         wait $!
-                                        echo -e "${ORANGE}restarting network${NC}"
-                                        /etc/init.d/networking stop; /etc/init.d/networking start
-                                        wait $!
-
                                 elif [[ $binary == "tnl_ks" ]]; then
                                         echo -e "${ORANGE}stopping Killswitch${NC}" >&2
                                         /etc/init.d/tnl_ks stop &>/dev/null &
@@ -280,7 +276,6 @@ vpn_stop() {
                                                 ip route add $route_default &>/dev/null &
                                                 wait $!
                                         fi
-
                         fi
                         else
                         echo -e "${RED}no running vpn interface found${NC}"
@@ -289,7 +284,7 @@ vpn_stop() {
         else
                 echo -e "${ORANGE}usage: vpn stop wireguard|openvpn|killswitch${NC}" >&2
         fi
-
+}
 
 
 case "$1" in
@@ -311,8 +306,8 @@ case "$1" in
         clear_routing
         vpn_start
         ;;
-        disable)
-        vpn_disable
+        stop)
+        vpn_stop
         ;;
         remove)
         vpn_remove
