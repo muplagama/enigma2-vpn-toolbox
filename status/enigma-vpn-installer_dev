@@ -153,15 +153,16 @@ case $main in
 1)
 sys_update
 vpnstatus
-wg_proof_inst
-ks_download
-vpn newconf wireguard
 vpn setdns
+ks_download
+wg_proof_inst
+vpn newconf wireguard
 mainmenu
 ;;
 2)
 sys_update
 vpnstatus
+vpn setdns
 ks_download
 vpn newconf openvpn
 vpn setdns
