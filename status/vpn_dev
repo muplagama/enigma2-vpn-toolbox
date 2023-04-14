@@ -217,41 +217,46 @@ iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
 ### start ###
 vpn_start() {
         if  [ -n "$binary" ]; then
+                        if [[ $binary == "tnl_ks" ]]; then
+                                kill_check=$(pgrep killswitch)
+                                        if  [ -z "$kill_check" ]; then
+                                                echo -e "${ORANGE}starting killswitch${NC}"
+                                                /etc/init.d/$binary start &>/dev/null &
+                                        else
+                                                echo -e "${RED}killswitch already running${NC}"
+                                        fi
+                        fi
+
                         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                 if  [ -z "$iface" ]; then
                                         if  [[ $binary == "wireguard" ]]; then
                                                         /etc/init.d/$binary start
                                                         kill_check=$(pgrep killswitch)
                                                         if  [ -z "$kill_check" ]; then
-                                                        echo ""
-                                                        read  -p "start killswitch?    y/n : " bqdl </dev/tty
-                                                        case $bqdl in
-                                                        [Yy]*)
-                                                        echo -e "${ORANGE}starting killswitch${NC}"
-                                                        /etc/init.d/tnl_ks start &>/dev/null &
-                                                        ;;
-                                                        *)
-                                                        echo -e "${RED}killswitch not started${NC}"
-                                                        exit 0
-                                                        ;;
-                                                        esac
-                                                        fi
-                                        elif [[ $binary == "tnl_ks" ]]; then
-                                                kill_check=$(pgrep killswitch)
-                                                        if  [ -z "$kill_check" ]; then
+                                                                echo ""
+                                                                read  -p "start killswitch?    y/n : " bqdl </dev/tty
+                                                                case $bqdl in
+                                                                [Yy]*)
                                                                 echo -e "${ORANGE}starting killswitch${NC}"
-                                                                /etc/init.d/$binary start &>/dev/null &
-                                                        else
-                                                                echo -e "${RED}killswitch already running${NC}"
+                                                                vpn killswitch start
+                                                                ;;
+                                                                *)
+                                                                echo -e "${RED}killswitch not started${NC}"
+                                                                exit 0
+                                                                ;;
+                                                                esac
                                                         fi
-                                        fi
+                                      fi
                                 else
                                         echo -e "${RED}any vpn already running, please stop first${NC}"
                                 fi
+
         else
                 echo -e "${ORANGE}usage: vpn start wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
+
+
 ### stop ###
 vpn_stop() {
         if  [ -n "$binary" ]; then
