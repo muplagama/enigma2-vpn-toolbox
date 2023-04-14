@@ -149,11 +149,7 @@ new_conf(){
                                 if [ -e /etc/$binary/auth_pass ]; then
                                         rm /etc/$binary/auth_pass
                                 fi
-                                iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
-                                        if  [ -z "$iface" ]; then
-                                                echo -e "${ORANGE}start $binary${NC}" >&2
-                                                vpn start $binary
-                                        fi                               
+                                                   
                                         
                                
 clear
@@ -211,6 +207,12 @@ EOF
         else
                 echo -e "${ORANGE}usage: vpn newconf wireguard|openvpn${NC}" >&2
         fi
+
+iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+        if  [ -z "$iface" ]; then
+        echo -e "${ORANGE}start $binary${NC}" >&2
+        vpn start $binary
+        fi            
 }
 ### start ###
 vpn_start() {
