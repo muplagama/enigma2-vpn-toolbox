@@ -251,29 +251,15 @@ vpn_stop() {
                         sleep 2
                         if  [ -n "$iface" ]; then
                                 if [[ $binary == "wireguard" ]]; then
-                                        echo -e "${ORANGE}stop killswitch${NC}" >&2
-                                        /etc/init.d/tnl_ks stop &>/dev/null &
-                                        wait $!
-                                        echo -e "${ORANGE}restore default route${NC}" >&2
-                                        route_default=$(grep default /etc/wireguard/route_default | grep default)
-                                        ip route add $route_default &>/dev/null &
-                                        wait $!
-                                        echo -e "${ORANGE}stopping $binary${NC}"
+                                        vpn stop killswitch
+                                        echo -e "${ORANGE}stop $binary${NC}" >&2
                                         /etc/init.d/$binary stop &>/dev/null &
                                         wait $!
                                 elif [[ $binary == "tnl_ks" ]]; then
-                                        echo -e "${ORANGE}stopping Killswitch${NC}" >&2
-                                        /etc/init.d/tnl_ks stop &>/dev/null &
-                                        sleep 2
-                                        if [ -e /etc/wiregaurd/route_default ]; then
-                                                echo -e "${ORANGE}restore default route${NC}" >&2
-                                                route_default=$(grep default /etc/wireguard/route_default | grep default)
-                                                ip route add $route_default &>/dev/null &
-                                                wait $!
-                                        elif [ -e /etc/openvpn/route_default ]; then
-                                                echo -e "${ORANGE}restore default route${NC}" >&2
-                                                route_default=$(grep default /etc/openvpn/route_default | grep default)
-                                                ip route add $route_default &>/dev/null &
+                                        kill_check=$(pgrep killswitch)
+                                        if  [ -z "$kill_check" ]; then
+                                                echo -e "${ORANGE}stop killswitch${NC}" >&2
+                                                /etc/init.d/tnl_ks stop &>/dev/null &
                                                 wait $!
                                         fi
                         fi
