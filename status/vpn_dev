@@ -149,6 +149,13 @@ new_conf(){
                                 if [ -e /etc/$binary/auth_pass ]; then
                                         rm /etc/$binary/auth_pass
                                 fi
+                                iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                                        if  [ -z "$iface" ]; then
+                                                echo -e "${ORANGE}start $binary${NC}" >&2
+                                                vpn start $binary
+                                        fi                               
+                                        
+                               
 clear
 echo -e "${ORANGE}Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
 ovpnconf=$(cat)
