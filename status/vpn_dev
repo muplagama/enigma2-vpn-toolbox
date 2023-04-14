@@ -308,6 +308,7 @@ case "$1" in
         ;;
         stop)
         vpn_stop
+        clear_routing
         ;;
         remove)
         vpn_remove
