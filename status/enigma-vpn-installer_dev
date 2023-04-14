@@ -79,7 +79,7 @@ sys_update() {
 ks_download() {
 	        echo -e "${GREEN}...download files${NC}"
 		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
-	wait $!
+		wait $!
 		chmod +x /bin/killswitch
 		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
 	wait $!
@@ -88,7 +88,7 @@ ks_download() {
 
 vpnstatus(){
 		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn_dev
-	
+		
 #		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
 		chmod +x /bin/vpn
 }
@@ -106,7 +106,7 @@ proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
 			chmod +x /etc/init.d/wireguard
 			echo -e "${GREEN}...download pre_up${NC}"
 			wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh /dev/null 2>&1
-			chmod 644 /etc/wireguard/pre_up.sh
+			chmod +x /etc/wireguard/pre_up.sh
  		wait $!		
  		else
                         echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
