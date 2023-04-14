@@ -28,8 +28,6 @@ if  [ -n "$binary" ]; then
                         route_set=$(ip route show | grep ${_ip})
                                 if [ -z "$route_set" ]; then
                                 ip route add ${_ip} via $_mydefaultgw
-                                ip route del default
-                                ip route del $local_dns
 fi
                 else
                         echo "no endpoint-config found"
