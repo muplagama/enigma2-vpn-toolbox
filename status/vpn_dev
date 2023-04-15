@@ -12,7 +12,7 @@ elif [[ $2 == "openvpn" ]]; then
 elif [[ $2 == "killswitch" ]]; then
         binary="tnl_ks"
 fi
-### dns settings ### 
+### dns settings ###
 select_dns1() {
 clear
 echo -e "${ORANGE}PRIMARY DNS${NC}"
@@ -114,7 +114,7 @@ location_check(){
         vpn_city=$(curl -s ipinfo.io/city)
         echo -e "${GREEN} VPN City:     "$vpn_city"${NC}"
 }
-ks_check(){ 
+ks_check(){
         echo -e "${ORANGE}$iface VPN killswitch check${NC}"
         check_ks=$(pgrep killswitch)
         if  [ -n  "$check_ks" ]; then
@@ -141,7 +141,7 @@ new_conf(){
                                 if  [ -n "$iface" ]; then
                                         echo -e "${ORANGE}stop $binary${NC}" >&2
                                         vpn stop $binary
-                                fi                               
+                                fi
                                 if [ -e /etc/$binary/*.conf ]; then
                                         echo -e "${ORANGE}remove config files${NC}" >&2
                                         rm /etc/$binary/*.conf
@@ -149,9 +149,9 @@ new_conf(){
                                 if [ -e /etc/$binary/auth_pass ]; then
                                         rm /etc/$binary/auth_pass
                                 fi
-                                                   
-                                        
-                               
+
+
+
 clear
 echo -e "${ORANGE}Pipe in OpenVPN config, or paste and it (push <ENTER> and ctrl-d when done)${NC}"
 ovpnconf=$(cat)
@@ -167,7 +167,7 @@ EOF
                 sed -i '1a\pull-filter ignore "route-ipv6"' /etc/openvpn/openvpn.conf
                 sed -i '1a\pull-filter ignore "ifconfig-ipv6"' /etc/openvpn/openvpn.conf
                 chmod 644 /etc/openvpn/openvpn.conf
-               
+
 clear
 echo -e "${ORANGE}creating OpenVPN Login File${NC}"
 echo ""
@@ -179,13 +179,13 @@ ${openvpnuser}
 ${openvpnpass}
 EOF
                 chmod 644 /etc/openvpn/auth_pass
-                 
+
 
         elif [[ $binary == "wireguard" ]]; then
                         iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                 if  [ -n "$iface" ]; then
                                         echo -e "${ORANGE}stop $binary${NC}" >&2
-                                        vpn stop $binary 
+                                        vpn stop $binary
                                 fi
                                 if [ -e /etc/$binary/*.conf ]; then
                                         echo -e "${ORANGE}remove config files${NC}" >&2
@@ -203,7 +203,7 @@ EOF
                 sed -i '/^PrivateKey.*/a PreUP = \/etc\/wireguard\/pre_up.sh' /etc/wireguard/wg0.conf
                 sed -i '/^Endpoint.*/a AllowedIPs = 0.0.0.0\/1\,128.0.0.0\/1' /etc/wireguard/wg0.conf
                 chmod 644 /etc/wireguard/wg0.conf
-                
+
         else
                 echo -e "${ORANGE}usage: vpn newconf wireguard|openvpn${NC}" >&2
         fi
@@ -212,12 +212,33 @@ iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
         if  [ -z "$iface" ]; then
         echo -e "${ORANGE}start $binary${NC}" >&2
         vpn start $binary
-        fi            
+        fi
 }
 ### start ###
 vpn_start() {
         if  [ -n "$binary" ]; then
-                        if [[ $binary == "tnl_ks" ]]; then
+                        if  [[ $binary == "wireguard" ]]; then
+                                iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                                        if  [ -z "$iface" ]; then
+                                                /etc/init.d/$binary start
+                                                        kill_check=$(pgrep killswitch)
+                                                                if  [ -z "$kill_check" ]; then
+                                                                        echo ""
+                                                                        read  -p "start killswitch?    y/n : " bqdl </dev/tty
+                                                                        case $bqdl in
+                                                                        [Yy]*)
+                                                                        vpn start killswitch
+                                                                        ;;
+                                                                        *)
+                                                                        echo -e "${RED}killswitch not started${NC}"
+                                                                        exit 0
+                                                                        ;;
+                                                                        esac
+                                                                fi
+                                        else
+                                                echo -e "${RED}any vpn already running, please stop first${NC}"
+                                        fi
+                        elif [[ $binary == "tnl_ks" ]]; then
                                 kill_check=$(pgrep killswitch)
                                         if  [ -z "$kill_check" ]; then
                                                 echo -e "${ORANGE}starting killswitch${NC}"
@@ -225,31 +246,9 @@ vpn_start() {
                                         else
                                                 echo -e "${RED}killswitch already running${NC}"
                                         fi
-                        fi
 
-                        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
-                                if  [ -z "$iface" ]; then
-                                        if  [[ $binary == "wireguard" ]]; then
-                                                        /etc/init.d/$binary start
-                                                        kill_check=$(pgrep killswitch)
-                                                        if  [ -z "$kill_check" ]; then
-                                                                echo ""
-                                                                read  -p "start killswitch?    y/n : " bqdl </dev/tty
-                                                                case $bqdl in
-                                                                [Yy]*)
-                                                                echo -e "${ORANGE}starting killswitch${NC}"
-                                                                vpn killswitch start
-                                                                ;;
-                                                                *)
-                                                                echo -e "${RED}killswitch not started${NC}"
-                                                                exit 0
-                                                                ;;
-                                                                esac
-                                                        fi
-                                      fi
-                                else
-                                        echo -e "${RED}any vpn already running, please stop first${NC}"
-                                fi
+
+                        fi
 
         else
                 echo -e "${ORANGE}usage: vpn start wireguard|openvpn|killswitch${NC}" >&2
@@ -260,23 +259,25 @@ vpn_start() {
 ### stop ###
 vpn_stop() {
         if  [ -n "$binary" ]; then
-                        iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
-                        sleep 2
-                        if  [ -n "$iface" ]; then
-                                if [[ $binary == "wireguard" ]]; then
-                                        vpn stop killswitch
-                                        /etc/init.d/$binary stop &>/dev/null &
-                                        wait $!
-                                elif [[ $binary == "tnl_ks" ]]; then
-                                        kill_check=$(pgrep killswitch)
-                                                if  [ -n "$kill_check" ]; then
-                                                        echo -e "${ORANGE}stop killswitch${NC}" >&2
-                                                        /etc/init.d/tnl_ks stop &>/dev/null &
-                                                        wait $!
-                                                fi
-                        fi
-                        else
-                        echo -e "${RED}no running vpn interface found${NC}"
+                        if [[ $binary == "wireguard" ]]; then
+                                iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
+                                        if  [ -n "$iface" ]; then
+                                                vpn stop killswitch
+                                                echo -e "${ORANGE}stop wireguard${NC}" >&2
+                                                /etc/init.d/$binary stop &>/dev/null &
+                                                wait $!
+                                        else
+                                                echo -e "${RED}no running vpn interface found${NC}"
+                                        fi
+                        elif [[ $binary == "tnl_ks" ]]; then
+                                kill_check=$(pgrep killswitch)
+                                        if  [ -n "$kill_check" ]; then
+                                                echo -e "${ORANGE}stop killswitch${NC}" >&2
+                                                /etc/init.d/tnl_ks stop &>/dev/null &
+                                                wait $!
+                                        else
+                                                echo -e "${RED}no running killswitch found${NC}"
+                                        fi
                         fi
 
         else
@@ -289,7 +290,7 @@ vpn_enable() {
                 if [[ $binary == "wireguard" ]]; then
                         kill_check=$(pgrep killswitch)
                                 if  [ -n "$kill_check" ]; then
-                                        echo -e "${ORANGE}stop killswitch${NC}" >&2        
+                                        echo -e "${ORANGE}stop killswitch${NC}" >&2
                                         /etc/init.d/tnl_ks stop &>/dev/null &
                                 fi
                         echo -e "${ORANGE}enable autostart for $binary${NC}"
@@ -315,19 +316,19 @@ vpn_enable() {
                                                 exit 0
                                                 ;;
                                         esac
-                                        
+
                 elif [[ $binary == "tnl_ks" ]]; then
                         echo -e "${ORANGE}enable autostart for killswitch${NC}"
                         update-rc.d $binary defaults &>/dev/null &
                         wait $!
                         kill_check=$(pgrep killswitch)
                                 if  [ -z "$kill_check" ]; then
-                                        vpn killswitch start
+                                        vpn start killswitch
                                 fi
                  fi
         else
                 echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
-        fi               
+        fi
 }
 
 case "$1" in
@@ -340,7 +341,7 @@ case "$1" in
         interface_check
         link_check
         location_check
-        ks_check        
+        ks_check
         ;;
         newconf)
         new_conf
