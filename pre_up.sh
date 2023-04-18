@@ -27,6 +27,7 @@ if  [ -n "$binary" ]; then
                           route_set=$(ip route show | grep ${_ip})
                                 if [ -z "$route_set" ]; then
                                 ip route add ${_ip} via $_mydefaultgw
+                                fi
                 elif [[ $binary == "wireguard" ]]; then
                         _endpoint=$(grep Endpoint /etc/$binary/*.conf | awk -F'=' '{print $2}' | awk -F# '{gsub(/ /,"");print ($1) }' | awk -F ':' '{print $1}')
                         ip route add $local_dns via "$_mydefaultgw"
