@@ -124,15 +124,18 @@ ks_check(){
         fi
 }
 ### clear routing ###
+
 clear_routing(){
-while : ; do
-    clear_routing=$(ip route list | grep -v '/24' | head -n1)
-        if  [ -n "$clear_routing" ]; then
-                ip route del $clear_routing
-        else
-                break
+        if  [[ $binary == "wireguard" ]]; then
+                while : ; do
+                        clear_routing=$(ip route list | grep -v '/24' | head -n1)
+                                if  [ -n "$clear_routing" ]; then
+                                ip route del $clear_routing
+                else
+                        break
+                fi
+                done
         fi
-done
 }
 ### new conf ###
 new_conf(){
