@@ -24,25 +24,35 @@ route_default=$(ip route | awk '/default/')
                         ip route del default
                 fi
         fi
-
-
 check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
         if  [ -n "$check_vpn" ]; then
                 if [[ $binary == "wireguard" ]]; then
                         ping_check=$(ping -c 2 -I $check_vpn 1.1.1.1 | grep time)
                                 if  [ -z "$ping_check" ]; then
-                                         _date=$(date +"%F %H:%M:%S")
+                                        _date=$(date +"%F %H:%M:%S")
                                         echo -e "$_date wg0 offline" >>  /tmp/wireguard.log
                                         /etc/init.d/$binary stop
                                         /etc/init.d/$binary start
                                 fi
-                fi
+                elif [[ $binary == "openvpn" ]]; then
+                        ping_check=$(ping -c 2 -I $check_vpn 1.1.1.1 | grep time)
+                                if  [ -z "$ping_check" ]; then
+                                        _date=$(date +"%F %H:%M:%S")
+                                        echo -e "$_date tun0 offline" >>  /tmp/openvpn.log
+                                        pkill openvpn
+                                        vpn start openvpn
+                                fi
+        fi
+ 
         else
                 if [[ $binary == "wireguard" ]]; then
                         _date=$(date +"%F %H:%M:%S")
                         echo -e "$_date wg0 offline" >>  /tmp/wireguard.log
                         /etc/init.d/$binary start
-
+                elif [[ $binary == "openvpn" ]]; then
+                        _date=$(date +"%F %H:%M:%S")
+                        echo -e "$_date tun0 offline" >>  /tmp/openvpn.log
+                        vpn start openvpn
                 fi
         fi
 
