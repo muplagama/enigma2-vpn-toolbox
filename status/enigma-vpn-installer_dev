@@ -97,18 +97,19 @@ wg_proof_inst() {
 proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
         if  [ -n "$proof_wg_inst" ]
                 then
-                        echo -e "${GREEN}...install WireGuard${NC}"
+			rm /etc/openvpn/* &>/dev/null &
+			echo -e "${GREEN}...install WireGuard${NC}"
                         opkg install wireguard-tools
 			echo -e "${GREEN}...create startscript${NC}"
-        		wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard > /dev/null 2>&1
+        		wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard &>/dev/null &
 			chmod +x /etc/init.d/wireguard
 			echo -e "${GREEN}...download pre_up${NC}"
-			wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh /dev/null 2>&1
+			wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh &>/dev/null &
 			chmod +x /etc/wireguard/pre_up.sh
 			if  [ ! -e /etc/wireguard/route_default ]; then
         		ip route show default | grep default > /etc/wireguard/route_default
 			fi
- 		wait $!		
+			wait $!		
  		else
                         echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
                         exit 0
@@ -122,10 +123,17 @@ ovpn_proof_inst() {
 proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
         if  [ -n "$proof_ovpn_inst" ]
                 then
-                        echo -e "${GREEN}...install Openvpn${NC}"
+			rm /etc/wireguard/* &>/dev/null &
+			echo -e "${GREEN}...install Openvpn${NC}"
                         opkg install openvpn
-			opkg -f openvpn remove > /dev/null 2>&1
-		wait $!
+			opkg -f openvpn remove &>/dev/null &
+			echo -e "${GREEN}...download pre_up${NC}"
+			wget -O /etc/openvpn/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh &>/dev/null &
+			chmod +x /etc/openvpn/pre_up.sh
+			if  [ ! -e /etc/openvpn/route_default ]; then
+        		ip route show default | grep default > /etc/openvpn/route_default
+			fi
+			wait $!					
                 else
                         echo -e "${RED}Sorry! Openvpn installation impossible!${NC}"
                         exit 0
