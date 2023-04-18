@@ -330,6 +330,27 @@ vpn_enable() {
                 echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
         fi
 }
+### disable ###
+vpn_disable() {
+    if  [ -n "$binary" ]; then
+                if [[ $binary == "wireguard" ]]; then
+                        vpn stop $binary
+                        update-rc.d -f $binary remove &>/dev/null &
+                        wait $!
+                        update-rc.d -f tnl_ks remove &>/dev/null &
+                        wait $!
+                        add_default=$(grep default /etc/$binary/route_default)
+                        ip route add $add_default
+                elif [[ $binary == "tnl_ks" ]]; then
+                        /etc/init.d/tnl_ks stop &>/dev/null &
+                        wait $!
+                        update-rc.d -f tnl_ks remove &>/dev/null &
+                        wait $!
+                fi
+        else
+                echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
+        fi     
+}
 
 case "$1" in
         setdns)
@@ -357,8 +378,8 @@ case "$1" in
         enable)
         vpn_enable
         ;;
-        newconf)
-        new_conf
+        disable)
+        vpn_disable
         ;;
     *)
     echo "usage:"
