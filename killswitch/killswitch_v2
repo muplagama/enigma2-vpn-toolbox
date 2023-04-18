@@ -3,6 +3,10 @@ clear
 ### presets
 
 local_dns=$(cat /etc/resolv.conf | grep nameserver | awk '/nameserver/ {print $2}' | head -n 1)
+checkps=$(pgrep tnl_ks)
+                if  [ -n "$checkps" ]; then
+                        pkill tnl_ks
+                fi
 
 ###define proto
 if [ -e /etc/wireguard/*.conf ]; then
