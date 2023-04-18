@@ -173,7 +173,6 @@ vpnstatus
 vpn setdns
 ks_download
 vpn newconf openvpn
-vpn setdns
 mainmenu
 ;;
 3)
