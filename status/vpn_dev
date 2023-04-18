@@ -241,6 +241,7 @@ vpn_start() {
                         elif  [[ $binary == "openvpn" ]]; then
                                 iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                         if  [ -z "$iface" ]; then
+                                                /etc/openvpn/pre_up.sh
                                                 /etc/init.d/$binary start
                                                         kill_check=$(pgrep killswitch)
                                                                 if  [ -z "$kill_check" ]; then
