@@ -133,6 +133,7 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
 
 			echo -e "${GREEN}...download pre_up${NC}"
 			wget -O /etc/openvpn/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh &>/dev/null &
+			wait $!
 			chmod +x /etc/openvpn/pre_up.sh
 			if  [ ! -e /etc/openvpn/route_default ]; then
         		ip route show default | grep default > /etc/openvpn/route_default
