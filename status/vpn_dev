@@ -351,6 +351,34 @@ vpn_disable() {
                 echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
         fi     
 }
+### remove ###
+vpn_remove() {
+    if  [ -n "$binary" ]; then
+                if [[ $binary == "wireguard" ]]; then
+                        vpn disable wireguard
+                        echo -e "${ORANGE}cleaning files ${NC}"#
+                        rm /bin/killswitch &>/dev/null &
+                        wait $!
+                        rm /etc/init.d/tnl_ks &>/dev/null &
+                        wait $!
+                        rm /etc/init.d/wireguard &>/dev/null &
+                        wait $!
+                        rm /etc/$binary/*
+                        echo -e "${ORANGE}remove WireGuard installation${NC}" >&2
+                        opkg remove wireguard-tools &>/dev/null &
+                        wait $!
+                        rm /bin/vpn
+                        echo -e "${GREEN}done${NC}" >&2
+                elif [[ $binary == "tnl_ks" ]]; then
+                        /etc/init.d/tnl_ks stop &>/dev/null &
+                        wait $!
+                        update-rc.d -f tnl_ks remove &>/dev/null &
+                        wait $!
+                fi
+        else
+                echo -e "${ORANGE}usage: vpn enable wireguard|openvpn|killswitch${NC}" >&2
+        fi     
+}
 
 case "$1" in
         setdns)
@@ -380,6 +408,9 @@ case "$1" in
         ;;
         disable)
         vpn_disable
+        ;;
+        remove)
+        vpn_remove
         ;;
     *)
     echo "usage:"
