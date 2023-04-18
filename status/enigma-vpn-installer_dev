@@ -172,6 +172,7 @@ sys_update
 vpnstatus
 vpn setdns
 ks_download
+ovpn_proof_inst
 vpn newconf openvpn
 mainmenu
 ;;
