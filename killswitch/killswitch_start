@@ -4,6 +4,10 @@
     case "$1" in
     start)
     killswitch
+      checkps=(pgrep tnl_ks)
+                if  [ -n "$checkps" ]; then
+                        pkill tnl_ks
+                fi
     ;;
     stop)
     pkill killswitch
