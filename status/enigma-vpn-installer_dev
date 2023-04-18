@@ -127,6 +127,10 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
 			echo -e "${GREEN}...install Openvpn${NC}"
                         opkg install openvpn
 			opkg -f openvpn remove &>/dev/null &
+			if [ ! -d "/etc/openvpn" ]; then
+    				mkdir /etc/openvpn
+			fi
+
 			echo -e "${GREEN}...download pre_up${NC}"
 			wget -O /etc/openvpn/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh &>/dev/null &
 			chmod +x /etc/openvpn/pre_up.sh
