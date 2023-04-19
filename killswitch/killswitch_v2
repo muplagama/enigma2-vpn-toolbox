@@ -35,6 +35,15 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                         /etc/init.d/$binary start
                                 fi
                 elif [[ $binary == "openvpn" ]]; then
+                                route_dns=$(ip route | grep $local_dns)
+                                        if  [ -n "$route_dns" ]; then
+                                                ip route del $local_dns
+                                        fi
+                                route_default=$(ip route | awk '/default/')
+                                        if  [ -n "$route_default" ]; then
+                                                ip route del default
+                                        fi
+
                         ping_check=$(ping -c 2 -I $check_vpn 1.1.1.1 | grep time)
                                 if  [ -z "$ping_check" ]; then
                                         _date=$(date +"%F %H:%M:%S")
@@ -43,9 +52,9 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                         sleep 2
                                         vpn start openvpn
                                         sleep 5
+
                                 fi
         fi
- 
         else
                 if [[ $binary == "wireguard" ]]; then
                         _date=$(date +"%F %H:%M:%S")
@@ -60,9 +69,5 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                         sleep 5
                 fi
         fi
-
-
-
-
 
 done
