@@ -73,6 +73,7 @@ wrong_opt() {
         clear
 }
 sys_update() {
+	echo -e "${GREEN}...updating sources${NC}"
         opkg update > /dev/null 2>&1
 	wait $!
 }
