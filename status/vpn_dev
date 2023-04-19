@@ -228,7 +228,7 @@ vpn_start() {
                                                 sleep 2
                                                         kill_check=$(pgrep killswitch)
                                                                 if  [ -z "$kill_check" ]; then
-                                                                        killswitch
+                                                                        killswitch &>/dev/null &
                                                                 fi
                                         else
                                                 pkill killswitch
@@ -244,7 +244,7 @@ vpn_start() {
                                                 sleep 5
                                                         kill_check=$(pgrep killswitch)
                                                                 if  [ -z "$kill_check" ]; then
-                                                                        killswitch
+                                                                        killswitch &>/dev/null &
                                                                 fi
                                         else
                                                 pkill killswitch
