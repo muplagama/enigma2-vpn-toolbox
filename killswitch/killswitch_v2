@@ -14,7 +14,6 @@ if [ -e /etc/wireguard/*.conf ]; then
 elif [ -e /etc/openvpn/*.conf ]; then
         binary="openvpn"
 fi
-
 ### function
 
 while true :; do
@@ -49,13 +48,13 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                                         _date=$(date +"%F %H:%M:%S")
                                         echo -e "$_date tun0 offline" >>  /tmp/openvpn.log
                                         pkill openvpn
-                                        sleep 2
+                                        sleep 1
                                         vpn start openvpn
                                         sleep 5
 
                                 fi
         fi
-        else
+                else
                 if [[ $binary == "wireguard" ]]; then
                         _date=$(date +"%F %H:%M:%S")
                         echo -e "$_date wg0 offline" >>  /tmp/wireguard.log
@@ -64,7 +63,7 @@ check_vpn=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
                         _date=$(date +"%F %H:%M:%S")
                         echo -e "$_date tun0 offline" >>  /tmp/openvpn.log
                         pkill openvpn
-                        sleep 2
+                        sleep 1
                         vpn start openvpn
                         sleep 5
                 fi
