@@ -159,7 +159,7 @@ echo -e ""
 #echo -e "6) VPN Manager + Wireguard - DM One/Two // TESTING"
 echo -e "0) Exit"
 echo -e ""
-echo -e "Info: killswitch disabled by default, can be enabled in post installation"
+echo -e "Info: autoconnect disabled by default, can be enabled in post installation"
 echo -e ""
 read -p "choose an Option: " main </dev/tty
 
