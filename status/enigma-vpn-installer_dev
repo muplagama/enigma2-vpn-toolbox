@@ -80,13 +80,16 @@ sys_update() {
 ks_download() {
 	        echo -e "${GREEN}...download files${NC}"
 		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
+		wait $!
 		chmod +x /bin/killswitch
 		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
+		wait $!
 		chmod +x /etc/init.d/tnl_ks
 		}
 
 vpnstatus(){
 		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn_dev
+		wait $!
 		
 #		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
 		chmod +x /bin/vpn
