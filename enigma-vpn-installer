@@ -88,12 +88,11 @@ ks_download() {
 		}
 
 vpnstatus(){
-		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn_dev
-		wait $!
-		wget -O /etc/profile.d/login.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/login.sh
+		wget -O /etc/profile.d/login.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/login.sh 2>&1
 		wait $!
 		chmod +x /etc/profile.d/login.sh
-#		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
+		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
+		wait $!
 		chmod +x /bin/vpn
 }
 
