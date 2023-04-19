@@ -126,7 +126,7 @@ proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
 			rm /etc/wireguard/* &>/dev/null &
 			echo -e "${GREEN}...install Openvpn${NC}"
                         opkg install openvpn
-			opkg -f openvpn remove &>/dev/null &
+			update-rc.d -f openvpn remove &>/dev/null &
 			if [ ! -d "/etc/openvpn" ]; then
     				mkdir /etc/openvpn
 			fi
