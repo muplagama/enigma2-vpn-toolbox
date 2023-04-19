@@ -45,13 +45,14 @@ choose an Option:
 ```
 to control use the "vpn" command
 
-vpn start wireguard|openvpn|killswitch          // to start a vpn connection (killswitch can be start oprional)
-vpn stop wireguard|openvpn|killswitch           // to stop a vpn connection     
-vpn enable wireguard|openvpn|killswitch         // to enable autostart
-vpn disable wireguard|openvpn|killswitch        // to stop vpn connection and disable autostart
-vpn remove wireguard|openvpn|killswitch         // to stop vpn connection and remove complete vpn installation
+vpn start wireguard|openvpn                     // to start a vpn connection (killswitch can be start oprional)
+vpn stop wireguard|openvpn                      // to stop a vpn connection     
+vpn enable wireguard|openvpn                    // to enable autostart
+vpn disable wireguard|openvpn                   // to stop vpn connection and disable autostart
+vpn remove wireguard|openvpn                    // to stop vpn connection and remove complete vpn installation
 vpn newconf wireguard|openvpn                   // to replace or renew vpn config files
 vpn status                                      // to check vpn status now
+vpn setdns                                      // to change dns settings (hardcoded) eg. cloudflare, quad9, google, adguard 
 
 
 ```
