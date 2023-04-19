@@ -1,0 +1,210 @@
+#!/bin/bash
+RED='\033[0;31m'
+ORANGE='\033[0;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+#by tnl.ninja
+### Preset ###
+wg_menu_check() {
+menu_check_av_wg=$(opkg list wireguard-tools | grep wireguard-tools)
+        if  [ -n "$menu_check_av_wg" ]
+                then
+                        echo -e "${GREEN}1) WireGuard install                     // opkg based systems ${NC}"
+                       
+                else
+                        echo -e "${RED}1) WireGuard install (not possible)    // opkg based systems${NC}"
+                        
+        fi
+}
+ovpn_menu_check() {
+menu_check_av_ovpn=$(opkg list openvpn | grep openvpn)
+        if  [ -n "$menu_check_av_ovpn" ]
+                then
+                        echo -e "${GREEN}2) OpenVPN install		       // opkg based systems${NC}"
+                        
+                else
+                        echo -e "${RED}2) OpenVPN install (not possible)                     // opkg based systems${NC}"
+                        
+        fi
+}
+
+
+wg_av() {
+check_install_wg=$(opkg list-installed wireguard-tools | grep wireguard-tools)
+        if  [ -n "$check_install_wg" ]
+                then
+                        echo -e "${ORANGE}WireGuard installation already found!${NC}"
+                else
+                        check_wg_av=$(opkg list wireguard-tools | grep wireguard-tools)
+                                if  [ -n "$check_wg_av" ]
+                                        then
+                                                echo -e "${GREEN}WireGuard installation possible!${NC}"
+                                        else
+                                                echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
+                                fi
+        fi
+}
+ovpn_av() {
+check_install_ovpn=$(opkg list-installed openvpn | grep openvpn)
+        if  [ -n "$check_install_ovpn" ]
+                then
+                        echo -e "${ORANGE}OpenVPN installation already found!${NC}"
+                else
+                        check_ovpn_av=$(opkg list openvpn | grep openvpn)
+                                if  [ -n "$check_ovpn_av" ]
+                                        then
+                                                echo -e "${GREEN}OpenVPN installation possible!${NC}"
+                                        else
+                                                echo -e "${RED}Sorry! OpenVPN installation impossible!${NC}"
+                                fi
+        fi
+}
+my_header() {
+        clear
+	echo "+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+"
+	echo "|E|n|i|g|m|a|2| |N|e|t|w|o|r|k| |T|o|o|l|b|o|x|"
+	echo "+-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+ +-+-+-+-+-+-+-+"
+	echo "                                   by tnl.ninja"
+        echo "                                               "
+}
+wrong_opt() {
+        echo "Wrong option!"
+        sleep 2
+        clear
+}
+sys_update() {
+	echo -e "${GREEN}...updating sources${NC}"
+        opkg update > /dev/null 2>&1
+	wait $!
+}
+ks_download() {
+	        echo -e "${GREEN}...download files${NC}"
+		wget -O /bin/killswitch https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_v2  > /dev/null 2>&1
+		wait $!
+		chmod +x /bin/killswitch
+		wget -O /etc/init.d/tnl_ks https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/killswitch/killswitch_start > /dev/null 2>&1
+		wait $!
+		chmod +x /etc/init.d/tnl_ks
+		}
+
+vpnstatus(){
+		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn_dev
+		wait $!
+		wget -O /etc/profile.d/login.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/login.sh
+		wait $!
+		chmod +x /etc/profile.d/login.sh
+#		wget -O /bin/vpn https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/status/vpn > /dev/null 2>&1
+		chmod +x /bin/vpn
+}
+
+### WireGuard ###
+wg_proof_inst() {
+        echo -e "${ORANGE}checking system compatibility...${NC}"
+proof_wg_inst=$(opkg list wireguard-tools | grep wireguard-tools)
+        if  [ -n "$proof_wg_inst" ]
+                then
+			rm /etc/openvpn/* &>/dev/null &
+			echo -e "${GREEN}...install WireGuard${NC}"
+                        opkg install wireguard-tools
+			echo -e "${GREEN}...create startscript${NC}"
+        		wget -O /etc/init.d/wireguard https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/rc/wireguard &>/dev/null &
+			wait $!
+			chmod +x /etc/init.d/wireguard
+			echo -e "${GREEN}...download pre_up${NC}"
+			wget -O /etc/wireguard/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh &>/dev/null &
+			wait $!
+			chmod +x /etc/wireguard/pre_up.sh
+			if  [ ! -e /etc/wireguard/route_default ]; then
+        		ip route show default | grep default > /etc/wireguard/route_default
+			fi
+			wait $!		
+ 		else
+                        echo -e "${RED}Sorry! WireGuard installation impossible!${NC}"
+                        exit 0
+        fi
+}
+
+
+##### OpenVPN
+ovpn_proof_inst() {
+        echo -e "${ORANGE}checking system compatibility...${NC}"
+proof_ovpn_inst=$(opkg list openvpn | grep openvpn)
+        if  [ -n "$proof_ovpn_inst" ]
+                then
+			rm /etc/wireguard/* &>/dev/null &
+			echo -e "${GREEN}...install Openvpn${NC}"
+                        opkg install openvpn
+			update-rc.d -f openvpn remove &>/dev/null &
+			if [ ! -d "/etc/openvpn" ]; then
+    				mkdir /etc/openvpn
+			fi
+			pkill openvpn
+			echo -e "${GREEN}...download pre_up${NC}"
+			wget -O /etc/openvpn/pre_up.sh https://raw.githubusercontent.com/muplagama/enigma2-vpn-toolbox/main/pre_up.sh &>/dev/null &
+			wait $!
+			chmod +x /etc/openvpn/pre_up.sh
+			if  [ ! -e /etc/openvpn/route_default ]; then
+        		ip route show default | grep default > /etc/openvpn/route_default
+			fi
+			wait $!					
+                else
+                        echo -e "${RED}Sorry! Openvpn installation impossible!${NC}"
+                        exit 0
+        fi
+}
+
+mainmenu() {
+my_header
+wg_av
+ovpn_av
+echo -e ""
+echo -e "##### Menu #####"
+echo -e ""
+wg_menu_check
+ovpn_menu_check
+echo -e ""
+#echo -e "6) VPN Manager + Wireguard - DM One/Two // TESTING"
+echo -e "0) Exit"
+echo -e ""
+echo -e "Info: autoconnect disabled by default, can be enabled in post installation"
+echo -e ""
+read -p "choose an Option: " main </dev/tty
+
+case $main in
+1)
+sys_update
+vpnstatus
+vpn setdns
+ks_download
+wg_proof_inst
+vpn newconf wireguard
+mainmenu
+;;
+2)
+sys_update
+vpnstatus
+vpn setdns
+ks_download
+ovpn_proof_inst
+vpn newconf openvpn
+mainmenu
+;;
+3)
+mainmenu
+;;
+4)	
+mainmenu
+;;
+0)
+echo "bye bye"
+rm /tmp/enigma-vpn-installer
+exit 0
+;;
+*)
+wrong_opt
+mainmenu
+;;
+
+esac
+}
+mainmenu
