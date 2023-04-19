@@ -234,6 +234,7 @@ vpn_start() {
                                                 pkill killswitch
                                                 /etc/init.d/$binary stop &>/dev/null &
                                                 wait $!
+                                                vpn start wireguard
                                         fi
                         elif  [[ $binary == "openvpn" ]]; then
                                 iface=$(ip -o link show | awk -F': ' '{print $2}' | grep -E  'wg|tun')
@@ -246,8 +247,8 @@ vpn_start() {
                                                                         killswitch
                                                                 fi
                                         else
-                                                pkill openvpn
                                                 pkill killswitch
+                                                pkill openvpn
                                                 vpn start openvpn
                                         fi
                         fi
@@ -302,7 +303,7 @@ vpn_enable() {
                                         vpn stop killswich
                                 fi
                         echo -e "${ORANGE}enable autostart for $binary${NC}"
-                        update-rc.d $binary defaults &>/dev/null &
+                        update-rc.d tnl_ks defaults &>/dev/null &
                         wait $!
                         echo -e "${ORANGE}starting $binary${NC}"
                         vpn stop $binary
@@ -314,7 +315,7 @@ vpn_enable() {
                                         vpn stop killswitch
                                 fi
                         echo -e "${ORANGE}enable autostart for $binary${NC}"
-                        update-rc.d tnl_ks defaults
+                        update-rc.d tnl_ks defaults &>/dev/null &
                         wait $!
                         vpn stop $binary
                         wait $!
@@ -323,7 +324,7 @@ vpn_enable() {
 
                 elif [[ $binary == "tnl_ks" ]]; then
                         echo -e "${ORANGE}enable autostart for killswitch${NC}"
-                        update-rc.d $binary defaults &>/dev/null &
+                        update-rc.d tnl_ks defaults &>/dev/null &
                         wait $!
                         kill_check=$(pgrep killswitch)
                                 if  [ -z "$kill_check" ]; then
@@ -429,11 +430,11 @@ case "$1" in
         ;;
     *)
     echo "usage:"
-    echo "vpn start wireguard|openvpn|killswitch">&2
+    echo "vpn start wireguard|openvpn">&2
     echo "vpn stop wireguard|openvpn|killswitch">&2
-    echo "vpn enable wireguard|openvpn|killswitch">&2
-    echo "vpn disable wireguard|openvpn|killswitch">&2
-    echo "vpn remove wireguard|openvpn|killswitch">&2
+    echo "vpn enable wireguard|openvpn">&2
+    echo "vpn disable wireguard|openvpn">&2
+    echo "vpn remove wireguard|openvpn">&2
     echo "vpn newconf wireguard|openvpn">&2
     echo "vpn status" >&2
     exit 1
