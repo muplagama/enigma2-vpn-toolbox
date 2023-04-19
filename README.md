@@ -1,5 +1,3 @@
-# !under construction!
-# !dont use before ready!
 # enigma2-vpn-toolbox
 
 ### Requirements:
@@ -34,8 +32,6 @@ OpenVPN installation possible!
 2) OpenVPN install                       // opkg based systems
 
 0) Exit
-
-Info: killswitch disabled by default, can be enabled in post installation
 
 choose an Option: 
 
