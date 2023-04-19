@@ -374,6 +374,8 @@ vpn_remove() {
                         rm /etc/init.d/wireguard &>/dev/null &
                         wait $!
                         rm /etc/$binary/*
+                        wait $!
+                        chattr -i /etc/resolv.conf
                         echo -e "${ORANGE}remove WireGuard installation${NC}" >&2
                         opkg remove wireguard-tools &>/dev/null &
                         wait $!
@@ -390,6 +392,8 @@ vpn_remove() {
                         rm /etc/init.d/tnl_ks &>/dev/null &
                         wait $!
                         rm /etc/$binary/*
+                        wait $!
+                        chattr -i /etc/resolv.conf
                         echo -e "${ORANGE}remove OpenVPN installation${NC}" >&2
                         opkg remove openvpn &>/dev/null &
                         wait $!
