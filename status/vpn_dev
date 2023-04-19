@@ -365,6 +365,8 @@ vpn_remove() {
                 if [[ $binary == "wireguard" ]]; then
                         vpn disable $binary
                         echo -e "${ORANGE}cleaning files ${NC}"
+                        rm  /etc/profile.d/login.sh &>/dev/null &
+                        wait $
                         rm /bin/killswitch &>/dev/null &
                         wait $!
                         rm /etc/init.d/tnl_ks &>/dev/null &
@@ -381,6 +383,8 @@ vpn_remove() {
                         vpn disable $binary
                         wait $!
                         echo -e "${ORANGE}cleaning files ${NC}"
+                        rm  /etc/profile.d/login.sh &>/dev/null &
+                        wait $!
                         rm /bin/killswitch &>/dev/null &
                         wait $!
                         rm /etc/init.d/tnl_ks &>/dev/null &
