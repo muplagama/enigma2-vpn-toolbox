@@ -13,8 +13,11 @@ if  [ ! -e /etc/$binary/route_default ]; then
         ip route show default | grep default > /etc/$binary/route_default
 fi
 
+
+
 if  [ -n "$binary" ]; then
         _mydefaultgw=$(grep default /etc/$binary/route_default | awk '/default/ {print $3}')
+        _defaultgw=$(grep default /etc/$binary/route_default)
                 if [[ $binary == "openvpn" ]]; then
                         _endpoint=$(grep -i remote /etc/$binary/*.conf | grep -vE 'cert|-random' |awk -F 'remote' '{print$2}' |awk '{print $1}' | head -n 1)
                         ip route add $local_dns via "$_mydefaultgw"
@@ -27,6 +30,7 @@ if  [ -n "$binary" ]; then
                           route_set=$(ip route show | grep ${_ip})
                                 if [ -z "$route_set" ]; then
                                 ip route add ${_ip} via $_mydefaultgw
+                                ip route add $_defaultgw
                                 fi
                 elif [[ $binary == "wireguard" ]]; then
                         _endpoint=$(grep Endpoint /etc/$binary/*.conf | awk -F'=' '{print $2}' | awk -F# '{gsub(/ /,"");print ($1) }' | awk -F ':' '{print $1}')
