@@ -1,6 +1,0 @@
-#!/bin/bash
-
-/var/www/projects.tnl.ninja/html/enigma2-vpn-toolbox
-git add .
-git commit -m "`date`"
-git push -u origin main
