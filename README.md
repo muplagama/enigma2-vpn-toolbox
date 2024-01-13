@@ -54,4 +54,7 @@ vpn setdns                                      // to change dns settings (hardc
 ```
 
 ### Donate: ###
-BTC: 1JgfTbJtRUTHPo2W56KmjmLvsZkg7MvrVk
+LTC: LXJgLriJeZNEVtUeimhaYcpL18a6e4XSYa
+BTC: bc1quxsqx0xkx32ngm55u265asa9pm9l9gh8dnp7gj
+ZIL: zil1ztmkc44wamkjr9cnmqdd8tcla9cmg2p663njma
+DOGE: DCsSYdXzWCfozSbLGzUWdSFxdL2G6p2CTg
